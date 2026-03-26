@@ -10,8 +10,7 @@
       "*.config.js",
       "src/declarations/**",
       "src/config.ts"
-    ],
-    "maxSize": 5242880
+    ]
   },
   "formatter": {
     "enabled": true,

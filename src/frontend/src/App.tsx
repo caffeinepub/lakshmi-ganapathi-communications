@@ -537,7 +537,7 @@ export default function App() {
             <div className="relative w-56 h-52 md:w-72 md:h-64">
               <div className="absolute inset-0 rounded-2xl border-2 border-primary/30 bg-accent/30" />
               <img
-                src="/assets/generated/sai-baba-banner.dim_1200x400.jpg"
+                src="/assets/uploads/d3911ffd02da7e389eb7e2bfd77965c8-019d2a3e-9149-703a-b7f3-dd338325d17f-1.jpg"
                 alt="Lakshmi Ganapathi Communications"
                 className="relative z-10 w-full h-full object-cover rounded-xl"
               />
