@@ -13,20 +13,16 @@ import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
 import {
   Calculator,
-  ChevronDown,
-  ClipboardList,
   FileText,
   Home,
   Mail,
   MapPin,
-  Menu,
   Phone,
   Ruler,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { useMemo, useState } from "react";
 import { PasswordGate } from "./components/PasswordGate";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -42,6 +38,7 @@ type Unit =
   | "Guntha"
   | "Cents"
   | "Bigha";
+type TabId = "home" | "calculator" | "regfees" | "contact";
 
 // ─── Conversion Utilities ─────────────────────────────────────────────────────
 
@@ -86,18 +83,7 @@ function computeArea(
   unit: Unit,
   roomsCount: number,
   propertyType: PropertyType,
-): {
-  areaInUnit: number;
-  sqFt: number;
-  sqYards: number;
-  sqMeters: number;
-  gadi: number;
-  acre: number;
-  hectare: number;
-  guntha: number;
-  cents: number;
-  bigha: number;
-} {
+) {
   const avgEW = (east + west) / 2;
   const avgNS = (north + south) / 2;
   const rawArea = avgEW * avgNS;
@@ -161,14 +147,14 @@ const DEED_RATES: Record<DeedType, DeedRates> = {
   Receipt: { dsdPct: null, rfPct: null, rfFixed: 1000, userCharges: 500 },
 };
 
-// ─── Social Media SVGs ────────────────────────────────────────────────────────
+// ─── Social Icons ─────────────────────────────────────────────────────────────
 
 function WhatsAppIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="16"
+      height="16"
       fill="currentColor"
       aria-hidden="true"
     >
@@ -181,8 +167,8 @@ function TelegramIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="16"
+      height="16"
       fill="currentColor"
       aria-hidden="true"
     >
@@ -195,8 +181,8 @@ function FacebookIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="16"
+      height="16"
       fill="currentColor"
       aria-hidden="true"
     >
@@ -209,8 +195,8 @@ function InstagramIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="16"
+      height="16"
       fill="currentColor"
       aria-hidden="true"
     >
@@ -223,8 +209,8 @@ function TwitterXIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="16"
+      height="16"
       fill="currentColor"
       aria-hidden="true"
     >
@@ -233,11 +219,47 @@ function TwitterXIcon() {
   );
 }
 
-// ─── App Component ────────────────────────────────────────────────────────────
+const SOCIAL_LINKS = [
+  {
+    href: "https://wa.me/919848872469",
+    bg: "#25D366",
+    icon: <WhatsAppIcon />,
+    label: "WhatsApp",
+  },
+  {
+    href: "https://t.me/",
+    bg: "#0088cc",
+    icon: <TelegramIcon />,
+    label: "Telegram",
+  },
+  {
+    href: "https://facebook.com/",
+    bg: "#1877F2",
+    icon: <FacebookIcon />,
+    label: "Facebook",
+  },
+  {
+    href: "https://instagram.com/",
+    bg: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)",
+    icon: <InstagramIcon />,
+    label: "Instagram",
+  },
+  {
+    href: "https://twitter.com/",
+    bg: "#000000",
+    icon: <TwitterXIcon />,
+    label: "Twitter/X",
+  },
+];
+
+type CalcResult = ReturnType<typeof computeArea> & { totalValue: number };
+
+// ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // ── Form state ──
+  const [activeTab, setActiveTab] = useState<TabId>("home");
+
   const [propertyType, setPropertyType] = useState<PropertyType>("Land");
   const [east, setEast] = useState("");
   const [west, setWest] = useState("");
@@ -247,15 +269,12 @@ export default function App() {
   const [unitRate, setUnitRate] = useState("");
   const [roomsCount, setRoomsCount] = useState("1");
 
-  // ── Registration Fees state ──
   const [regDeedType, setRegDeedType] = useState<DeedType>("Sale Deed");
   const [regPropertyValue, setRegPropertyValue] = useState("");
 
   const [showMap, setShowMap] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // ── Live calculations ──
-  const calc = useMemo(() => {
+  const calc = useMemo<CalcResult | null>(() => {
     const e = Number.parseFloat(east) || 0;
     const w = Number.parseFloat(west) || 0;
     const n = Number.parseFloat(north) || 0;
@@ -281,1581 +300,255 @@ export default function App() {
     return { dsd, rf, userCharges, total };
   }, [regDeedType, regPropertyValue]);
 
-  useEffect(() => {
-    if (calc && calc.totalValue > 0 && Number.parseFloat(unitRate) > 0) {
-      setRegPropertyValue(String(Math.round(calc.totalValue)));
-    }
-  }, [calc, unitRate]);
-
-  // ── Smooth scroll helper ──
-  function scrollTo(id: string) {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-    setMobileMenuOpen(false);
-  }
-
-  const navLinks = [
-    { label: "Home / హోమ్", id: "hero" },
-    { label: "Services / సేవలు", id: "services" },
-    { label: "Calculator / లెక్కింపు", id: "calculator" },
-    { label: "Reg. Fees / నమోదు రుసుమু", id: "registration" },
-    { label: "Contact / సంప్రదించండి", id: "contact" },
-  ];
-
   if (!isAuthenticated)
     return <PasswordGate onSuccess={() => setIsAuthenticated(true)} />;
 
+  const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
+    { id: "home", label: "Home / హోమ్", icon: <Home className="w-3.5 h-3.5" /> },
+    {
+      id: "calculator",
+      label: "Calculator / లెక్కింపు",
+      icon: <Calculator className="w-3.5 h-3.5" />,
+    },
+    {
+      id: "regfees",
+      label: "Reg. Fees / నమోదు రుసుము",
+      icon: <FileText className="w-3.5 h-3.5" />,
+    },
+    {
+      id: "contact",
+      label: "Contact / సంప్రదించండి",
+      icon: <Phone className="w-3.5 h-3.5" />,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+      className="bg-background"
+    >
       <Toaster richColors position="top-center" />
 
-      {/* ═══════════════════════════════════════════════
-          STICKY NAVIGATION
-      ═══════════════════════════════════════════════ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-b border-primary/20 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo + brand */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-2 border-primary/60 overflow-hidden shadow-gold flex-shrink-0">
-                <img
-                  src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
-                  alt="Proprietor"
-                  className="w-full h-full object-cover object-top"
-                />
-              </div>
-              <div className="hidden sm:block">
-                <p
-                  className="font-serif text-sm font-bold leading-none"
-                  style={{ color: "#D4800A" }}
-                >
-                  Lakshmi Ganapathi
-                </p>
-                <p className="font-serif text-xs text-muted-foreground leading-none mt-0.5">
-                  Communications
-                </p>
-              </div>
-            </div>
-
-            {/* Desktop nav links */}
-            <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <button
-                  key={link.id}
-                  type="button"
-                  onClick={() => scrollTo(link.id)}
-                  className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/60 rounded-md transition-all duration-150"
-                  data-ocid={`nav.${link.id}.link`}
-                >
-                  {link.label}
-                </button>
-              ))}
-            </div>
-
-            {/* CTA + mobile menu */}
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                className="hidden sm:flex bg-primary text-primary-foreground hover:bg-primary/90 shadow-gold"
-                onClick={() => scrollTo("calculator")}
-                data-ocid="nav.calculator.primary_button"
-              >
-                <Calculator className="w-3.5 h-3.5 mr-1.5" />
-                Calculate
-              </Button>
-              <button
-                type="button"
-                className="md:hidden p-2 rounded-md hover:bg-accent/60 transition-colors"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
-              </button>
-            </div>
+      {/* HEADER */}
+      <header
+        className="flex-shrink-0 flex items-center justify-between px-3 sm:px-5 border-b-2"
+        style={{
+          height: "62px",
+          backgroundColor: "oklch(var(--card))",
+          borderColor: "#D4800A",
+        }}
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div
+            className="w-9 h-9 rounded-full border-2 overflow-hidden flex-shrink-0"
+            style={{ borderColor: "#D4800A" }}
+          >
+            <img
+              src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
+              alt="Proprietor"
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+          <div className="min-w-0">
+            <p
+              className="font-serif font-bold text-sm sm:text-base leading-tight truncate"
+              style={{ color: "#D4800A" }}
+            >
+              Lakshmi Ganapathi Communications
+            </p>
+            <p
+              className="text-xs font-bold truncate"
+              style={{ color: "#D4800A", opacity: 0.8 }}
+            >
+              Prop: Tiruvaipati Venkata Nageswara Prasad
+            </p>
           </div>
         </div>
+        <div className="hidden sm:flex flex-col items-end gap-0.5 flex-shrink-0 ml-2">
+          <a
+            href="tel:+919848872469"
+            className="font-mono font-bold text-xs hover:opacity-80"
+            style={{ color: "#D4800A" }}
+          >
+            +91 9848872469
+          </a>
+          <a
+            href="mailto:nageswaraprasadtv@gmail.com"
+            className="font-bold text-xs hover:underline text-foreground"
+          >
+            nageswaraprasadtv@gmail.com
+          </a>
+        </div>
+      </header>
 
-        {/* Mobile dropdown */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
+      {/* TAB NAV */}
+      <nav
+        className="flex-shrink-0 flex items-center border-b overflow-x-auto"
+        style={{ height: "44px", backgroundColor: "oklch(var(--card))" }}
+      >
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            data-ocid={`nav.${tab.id}.tab`}
+            className="flex items-center gap-1.5 px-3 sm:px-5 h-full text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-all duration-150 flex-shrink-0"
+            style={{
+              borderBottomColor:
+                activeTab === tab.id ? "#D4800A" : "transparent",
+              color:
+                activeTab === tab.id
+                  ? "#D4800A"
+                  : "oklch(var(--muted-foreground))",
+              backgroundColor:
+                activeTab === tab.id ? "rgba(212,128,10,0.06)" : "transparent",
+            }}
+          >
+            {tab.icon}
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      {/* TAB CONTENT */}
+      <main className="flex-1 overflow-y-auto">
+        <AnimatePresence mode="wait">
+          {activeTab === "home" && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-primary/20 bg-card"
+              key="home"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
             >
-              <div className="px-4 py-2 space-y-1">
-                {navLinks.map((link) => (
-                  <button
-                    key={link.id}
-                    type="button"
-                    onClick={() => scrollTo(link.id)}
-                    className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/60 rounded-md transition-all"
-                  >
-                    {link.label}
-                  </button>
-                ))}
-              </div>
+              <HomeTab />
+            </motion.div>
+          )}
+          {activeTab === "calculator" && (
+            <motion.div
+              key="calc"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <CalculatorTab
+                propertyType={propertyType}
+                setPropertyType={setPropertyType}
+                east={east}
+                setEast={setEast}
+                west={west}
+                setWest={setWest}
+                north={north}
+                setNorth={setNorth}
+                south={south}
+                setSouth={setSouth}
+                unit={unit}
+                setUnit={setUnit}
+                unitRate={unitRate}
+                setUnitRate={setUnitRate}
+                roomsCount={roomsCount}
+                setRoomsCount={setRoomsCount}
+                calc={calc}
+              />
+            </motion.div>
+          )}
+          {activeTab === "regfees" && (
+            <motion.div
+              key="reg"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <RegFeesTab
+                regDeedType={regDeedType}
+                setRegDeedType={setRegDeedType}
+                regPropertyValue={regPropertyValue}
+                setRegPropertyValue={setRegPropertyValue}
+                regCalc={regCalc}
+                calc={calc}
+              />
+            </motion.div>
+          )}
+          {activeTab === "contact" && (
+            <motion.div
+              key="contact"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ContactTab onViewMap={() => setShowMap(true)} />
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+      </main>
 
-      {/* ═══════════════════════════════════════════════
-          HERO SECTION
-      ═══════════════════════════════════════════════ */}
-      <section
-        id="hero"
-        className="relative flex flex-col"
-        style={{ minHeight: "100vh", maxHeight: "100vh" }}
-      >
-        {/* Full-width banner background */}
-        <div className="absolute inset-0 overflow-hidden">
-          <img
-            src="/assets/uploads/d3911ffd02da7e389eb7e2bfd77965c8-019d2a3e-9149-703a-b7f3-dd338325d17f-1.jpg"
-            alt="Banner"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
-        </div>
-
-        {/* Hero content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center pt-16 px-4 text-center">
-          {/* Circular profile photo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="mb-6"
-          >
-            <div
-              className="w-28 h-28 md:w-36 md:h-36 rounded-full border-4 overflow-hidden mx-auto shadow-[0_0_40px_rgba(212,128,10,0.5)]"
-              style={{ borderColor: "#D4800A" }}
-            >
-              <img
-                src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
-                alt="Proprietor"
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-serif text-4xl md:text-6xl font-bold leading-tight mb-2"
-            style={{ color: "#D4800A" }}
-          >
-            Lakshmi Ganapathi
-          </motion.h1>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-serif text-2xl md:text-3xl font-semibold text-white mb-1"
-          >
-            Communications
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-amber-100/80 text-lg md:text-xl font-medium mb-6"
-          >
-            Property Land Measurement Calculator
-          </motion.p>
-
-          {/* Prop name */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            className="font-bold text-base mb-8"
-            style={{ color: "#D4800A" }}
-          >
-            Prop: Tiruvaipati Venkata Nageswara Prasad
-          </motion.p>
-
-          {/* Contact pills */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="flex flex-wrap justify-center gap-3 mb-10"
-          >
-            <a
-              href="tel:+919848872469"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all"
-            >
-              <Phone className="w-4 h-4" style={{ color: "#D4800A" }} />
-              <span className="font-mono font-bold tracking-wider">
-                +91 9848872469
-              </span>
-            </a>
-            <a
-              href="mailto:nageswaraprasadtv@gmail.com"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all"
-            >
-              <Mail className="w-4 h-4" style={{ color: "#D4800A" }} />
-              <span className="font-bold">nageswaraprasadtv@gmail.com</span>
-            </a>
-          </motion.div>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="flex flex-wrap justify-center gap-4"
-          >
-            <Button
-              size="lg"
-              className="text-base px-8 shadow-[0_4px_20px_rgba(212,128,10,0.4)] hover:shadow-[0_4px_30px_rgba(212,128,10,0.6)] transition-all"
-              style={{ backgroundColor: "#D4800A", color: "white" }}
-              onClick={() => scrollTo("calculator")}
-              data-ocid="hero.primary_button"
-            >
-              <Calculator className="w-5 h-5 mr-2" />
-              Start Calculating
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-base px-8 text-white border-white/40 hover:bg-white/10"
-              onClick={() => scrollTo("services")}
-              data-ocid="hero.secondary_button"
-            >
-              Learn More
-              <ChevronDown className="w-5 h-5 ml-2" />
-            </Button>
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
-          className="relative z-10 pb-8 flex justify-center"
-        >
-          <ChevronDown className="w-6 h-6 text-white/40" />
-        </motion.div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          SERVICES / ABOUT SECTION
-      ═══════════════════════════════════════════════ */}
-      <section id="services" className="py-20 bg-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {/* Section heading */}
-          <div className="text-center mb-14">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full"
-              style={{
-                color: "#D4800A",
-                backgroundColor: "rgba(212,128,10,0.1)",
-              }}
-            >
-              ✦ Our Services ✦
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="font-serif text-3xl md:text-4xl font-bold text-foreground"
-            >
-              What We Offer
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="mt-3 text-muted-foreground text-base max-w-xl mx-auto"
-            >
-              Comprehensive property measurement and registration fee
-              calculation tools for Agricultural Land, Plots &amp; Rooms — in
-              English &amp; Telugu.
-            </motion.p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: <Ruler className="w-7 h-7" />,
-                title: "Property Measurement",
-                telugu: "ఆస్తి కొలత",
-                desc: "Measure Agricultural Land, Plots, and Rooms with directional inputs (East, West, North, South).",
-              },
-              {
-                icon: <Calculator className="w-7 h-7" />,
-                title: "Unit Conversion",
-                telugu: "యూనిట్ మార్పిడి",
-                desc: "Convert instantly between Sq Ft, Sq Yards, Sq Meters, Gadi, Guntha, Cents, Bigha, Acre, and Hectare.",
-              },
-              {
-                icon: <FileText className="w-7 h-7" />,
-                title: "Registration Fees",
-                telugu: "నమోదు రుసుములు",
-                desc: "Calculate DSD, R.F, and User Charges for Sale, Gift, Partition, Mortgage, Cancellation Deeds.",
-              },
-              {
-                icon: <ClipboardList className="w-7 h-7" />,
-                title: "Bilingual Interface",
-                telugu: "ద్విభాషా ఇంటర్ఫేస్",
-                desc: "All labels, results and measurements displayed in both English and Telugu for maximum clarity.",
-              },
-            ].map((svc, i) => (
-              <motion.div
-                key={svc.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full border-border hover:border-primary/40 hover:shadow-gold transition-all duration-300 group">
-                  <CardContent className="pt-6 pb-6">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
-                      style={{
-                        backgroundColor: "rgba(212,128,10,0.12)",
-                        color: "#D4800A",
-                      }}
-                    >
-                      {svc.icon}
-                    </div>
-                    <h3 className="font-serif text-lg font-bold text-foreground mb-0.5">
-                      {svc.title}
-                    </h3>
-                    <p
-                      className="text-xs font-bold mb-2"
-                      style={{ color: "#D4800A" }}
-                    >
-                      {svc.telugu}
-                    </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {svc.desc}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Unit reference table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="mt-12 rounded-2xl border border-border overflow-hidden"
-          >
-            <div
-              className="px-6 py-4 border-b border-border"
-              style={{ backgroundColor: "rgba(212,128,10,0.06)" }}
-            >
-              <h3 className="font-serif text-lg font-bold text-foreground">
-                Unit Reference / యూనిట్ సూచన
-              </h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-accent/40">
-                    <th className="py-2.5 px-4 text-left font-semibold text-muted-foreground uppercase tracking-wide text-xs">
-                      Unit / యూనిట్
-                    </th>
-                    <th className="py-2.5 px-4 text-left font-semibold text-muted-foreground uppercase tracking-wide text-xs">
-                      Equivalent in Sq Ft
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { unit: "Sq Ft / చ.అ", val: "1 sq ft" },
-                    { unit: "Sq Yards / చ.గ", val: "9 sq ft" },
-                    { unit: "Sq Meters / చ.మీ", val: "10.7639 sq ft" },
-                    { unit: "Gadi / గడి", val: "72 sq ft (= 8 sq yd)" },
-                    { unit: "Guntha / గుంట", val: "1,089 sq ft" },
-                    { unit: "Cents / సెంట్", val: "435.6 sq ft" },
-                    { unit: "Bigha / బిఘా", val: "14,400 sq ft" },
-                    { unit: "Acre / ఎకరం", val: "43,560 sq ft" },
-                    { unit: "Hectare / హెక్టార్", val: "1,07,639 sq ft" },
-                  ].map((row, i) => (
-                    <tr
-                      key={row.unit}
-                      className={i % 2 === 0 ? "bg-background" : "bg-accent/20"}
-                    >
-                      <td className="py-2.5 px-4 font-bold text-foreground">
-                        {row.unit}
-                      </td>
-                      <td className="py-2.5 px-4 text-muted-foreground">
-                        {row.val}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          CALCULATOR SECTION
-      ═══════════════════════════════════════════════ */}
-      <section id="calculator" className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {/* Section heading */}
-          <div className="text-center mb-12">
-            <span
-              className="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full"
-              style={{
-                color: "#D4800A",
-                backgroundColor: "rgba(212,128,10,0.1)",
-              }}
-            >
-              ✦ Calculator ✦
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-              Property Measurement Calculator
-            </h2>
-            <p className="mt-2 text-muted-foreground">ఆస్తి కొలత కాలిక్యులేటర్</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* ── Form ── */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <Card className="shadow-card border-border bg-card h-full">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 font-serif text-foreground">
-                    <Calculator
-                      className="w-5 h-5"
-                      style={{ color: "#D4800A" }}
-                    />
-                    Enter Measurements / కొలతలు నమోదు చేయండి
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-5">
-                  {/* Property Type */}
-                  <div>
-                    <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 block">
-                      Property Type / ఆస్తి రకం
-                    </Label>
-                    <div className="flex gap-2 flex-wrap">
-                      {(
-                        ["Agricultural Land", "Land", "Room"] as PropertyType[]
-                      ).map((pt) => (
-                        <button
-                          key={pt}
-                          type="button"
-                          onClick={() => setPropertyType(pt)}
-                          data-ocid={`calc.${pt.toLowerCase().replace(" ", "_")}.toggle`}
-                          className={[
-                            "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border",
-                            propertyType === pt
-                              ? "text-white border-transparent shadow-gold"
-                              : "bg-card text-foreground border-border hover:border-primary/60",
-                          ].join(" ")}
-                          style={
-                            propertyType === pt
-                              ? { backgroundColor: "#D4800A" }
-                              : {}
-                          }
-                        >
-                          {pt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Room count */}
-                  {propertyType === "Room" && (
-                    <div>
-                      <Label
-                        htmlFor="rooms"
-                        className="text-sm font-bold text-foreground mb-1 block"
-                      >
-                        Number of Rooms / గదుల సంఖ్య
-                      </Label>
-                      <Input
-                        id="rooms"
-                        type="number"
-                        min="1"
-                        value={roomsCount}
-                        onChange={(e) => setRoomsCount(e.target.value)}
-                        className="w-32"
-                        data-ocid="calc.rooms.input"
-                      />
-                    </div>
-                  )}
-
-                  {/* Directional inputs */}
-                  <div>
-                    <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 block">
-                      Dimensions / కొలతలు
-                    </Label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {(
-                        [
-                          {
-                            label: "East / తూర్పు",
-                            val: east,
-                            set: setEast,
-                            id: "east",
-                          },
-                          {
-                            label: "West / పడమర",
-                            val: west,
-                            set: setWest,
-                            id: "west",
-                          },
-                          {
-                            label: "North / ఉత్తర",
-                            val: north,
-                            set: setNorth,
-                            id: "north",
-                          },
-                          {
-                            label: "South / దక్షిణ",
-                            val: south,
-                            set: setSouth,
-                            id: "south",
-                          },
-                        ] as const
-                      ).map(({ label, val, set, id }) => (
-                        <div key={id}>
-                          <Label
-                            htmlFor={id}
-                            className="text-xs font-bold text-foreground mb-1 block"
-                          >
-                            {label}
-                          </Label>
-                          <Input
-                            id={id}
-                            type="number"
-                            min="0"
-                            step="any"
-                            placeholder="0.00"
-                            value={val}
-                            onChange={(e) => set(e.target.value)}
-                            data-ocid={`calc.${id}.input`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Unit selector */}
-                  <div>
-                    <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 block">
-                      Unit / యూనిట్
-                    </Label>
-                    <Select
-                      value={unit}
-                      onValueChange={(v) => setUnit(v as Unit)}
-                    >
-                      <SelectTrigger data-ocid="calc.unit.select">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(
-                          [
-                            ["Sq Ft", "Sq Ft / చ.అ"],
-                            ["Sq Yards", "Sq Yards / చ.గ"],
-                            ["Sq Meters", "Sq Meters / చ.మీ"],
-                            ["Gadi", "Gadi / గడి"],
-                            ["Guntha", "Guntha / గుంట"],
-                            ["Cents", "Cents / సెంట్"],
-                            ["Bigha", "Bigha / బిఘా"],
-                            ["Acre", "Acre / ఎకరం"],
-                            ["Hectare", "Hectare / హెక్టార్"],
-                          ] as [Unit, string][]
-                        ).map(([val, label]) => (
-                          <SelectItem key={val} value={val}>
-                            {label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Unit rate */}
-                  <div>
-                    <Label
-                      htmlFor="unitRate"
-                      className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 block"
-                    >
-                      Rate per {unit} / ₹ రేటు
-                    </Label>
-                    <Input
-                      id="unitRate"
-                      type="number"
-                      min="0"
-                      step="any"
-                      placeholder="Enter ₹ per unit (optional)"
-                      value={unitRate}
-                      onChange={(e) => setUnitRate(e.target.value)}
-                      data-ocid="calc.unit_rate.input"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* ── Live Results ── */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <Card className="shadow-card border-border bg-card h-full">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 font-serif text-foreground">
-                    <Ruler className="w-5 h-5" style={{ color: "#D4800A" }} />
-                    Live Results / తక్షణ ఫలితాలు
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <AnimatePresence mode="wait">
-                    {calc ? (
-                      <motion.div
-                        key="results"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="space-y-4"
-                        data-ocid="results.card"
-                      >
-                        {/* Total area highlight */}
-                        <div
-                          className="rounded-xl p-5 text-center border"
-                          style={{
-                            backgroundColor: "rgba(212,128,10,0.08)",
-                            borderColor: "rgba(212,128,10,0.3)",
-                          }}
-                        >
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1 font-bold">
-                            Total Area / మొత్తం విస్తీర్ణం ({unit})
-                          </p>
-                          <p
-                            className="font-mono text-4xl font-bold"
-                            style={{ color: "#D4800A" }}
-                          >
-                            {formatArea(calc.areaInUnit)}
-                          </p>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {unit}
-                          </p>
-                        </div>
-
-                        {/* All unit conversions */}
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                            All Units / అన్ని యూనిట్లు
-                          </p>
-                          <div className="grid grid-cols-1 gap-1.5">
-                            {[
-                              {
-                                label: "Square Feet / చదరపు అడుగులు",
-                                value: calc.sqFt,
-                                suffix: "sq ft",
-                              },
-                              {
-                                label: "Square Yards / చ.గజాలు",
-                                value: calc.sqYards,
-                                suffix: "sq yds",
-                              },
-                              {
-                                label: "Square Meters / చదరపు మీటర్లు",
-                                value: calc.sqMeters,
-                                suffix: "sq m",
-                              },
-                              {
-                                label: "Gadi / గడి",
-                                value: calc.gadi,
-                                suffix: "gadi",
-                              },
-                              {
-                                label: "Acre / ఎకరం",
-                                value: calc.acre,
-                                suffix: "acre",
-                              },
-                              {
-                                label: "Hectare / హెక్టార్",
-                                value: calc.hectare,
-                                suffix: "ha",
-                              },
-                              {
-                                label: "Guntha / గుంట",
-                                value: calc.guntha,
-                                suffix: "guntha",
-                              },
-                              {
-                                label: "Cents / సెంట్",
-                                value: calc.cents,
-                                suffix: "cents",
-                              },
-                              {
-                                label: "Bigha / బిఘా",
-                                value: calc.bigha,
-                                suffix: "bigha",
-                              },
-                            ].map(({ label, value, suffix }) => (
-                              <div
-                                key={label}
-                                className="flex justify-between items-center py-2 px-3 rounded-lg bg-background border border-border text-sm"
-                              >
-                                <span className="text-muted-foreground font-bold">
-                                  {label}
-                                </span>
-                                <span className="font-semibold text-foreground">
-                                  {formatArea(value)}{" "}
-                                  <span className="text-xs text-muted-foreground">
-                                    {suffix}
-                                  </span>
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Total value */}
-                        {Number.parseFloat(unitRate) > 0 && (
-                          <div
-                            className="rounded-xl p-4 text-center border"
-                            style={{
-                              backgroundColor: "rgba(212,128,10,0.06)",
-                              borderColor: "rgba(212,128,10,0.3)",
-                            }}
-                          >
-                            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1 font-bold">
-                              Estimated Value / అంచనా విలువ
-                            </p>
-                            <p
-                              className="font-mono text-2xl font-bold"
-                              style={{ color: "#D4800A" }}
-                            >
-                              {formatINR(calc.totalValue)}
-                            </p>
-                          </div>
-                        )}
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="empty"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex flex-col items-center justify-center py-16 text-center"
-                        data-ocid="results.empty_state"
-                      >
-                        <div
-                          className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-                          style={{ backgroundColor: "rgba(212,128,10,0.1)" }}
-                        >
-                          <Ruler
-                            className="w-8 h-8"
-                            style={{ color: "#D4800A", opacity: 0.5 }}
-                          />
-                        </div>
-                        <p className="text-muted-foreground font-serif italic">
-                          Enter measurements to see live results
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          కొలతలు నమోదు చేయండి
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          REGISTRATION FEES SECTION
-      ═══════════════════════════════════════════════ */}
-      <section id="registration" className="py-20 bg-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {/* Section heading */}
-          <div className="text-center mb-12">
-            <span
-              className="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full"
-              style={{
-                color: "#D4800A",
-                backgroundColor: "rgba(212,128,10,0.1)",
-              }}
-            >
-              ✦ Registration ✦
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-              Registration Fees Calculator
-            </h2>
-            <p className="mt-2 text-muted-foreground">నమోదు రుసుముల కాలిక్యులేటర్</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left: Form */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <Card className="shadow-card border-border h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-serif text-foreground">
-                    <FileText
-                      className="w-5 h-5"
-                      style={{ color: "#D4800A" }}
-                    />
-                    Select Deed Type / డీడ్ రకం
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-5">
-                  {/* Deed type */}
-                  <div>
-                    <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 block">
-                      Deed Type / పత్రం రకం
-                    </Label>
-                    <Select
-                      value={regDeedType}
-                      onValueChange={(v) => setRegDeedType(v as DeedType)}
-                    >
-                      <SelectTrigger data-ocid="reg.deed_type.select">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(Object.keys(DEED_RATES) as DeedType[]).map((deed) => (
-                          <SelectItem key={deed} value={deed}>
-                            {deed}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Rate info chips */}
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-background border border-border text-xs">
-                      <span className="font-bold text-foreground">DSD:</span>
-                      <span className="text-muted-foreground">
-                        {DEED_RATES[regDeedType].dsdPct !== null
-                          ? `${DEED_RATES[regDeedType].dsdPct}%`
-                          : "N/A"}
-                      </span>
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-background border border-border text-xs">
-                      <span className="font-bold text-foreground">R.F:</span>
-                      <span className="text-muted-foreground">
-                        {DEED_RATES[regDeedType].rfPct !== null
-                          ? `${DEED_RATES[regDeedType].rfPct}%`
-                          : `₹${DEED_RATES[regDeedType].rfFixed?.toLocaleString("en-IN")} fixed`}
-                      </span>
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-background border border-border text-xs">
-                      <span className="font-bold text-foreground">
-                        User Charges:
-                      </span>
-                      <span className="text-muted-foreground">
-                        ₹
-                        {DEED_RATES[regDeedType].userCharges.toLocaleString(
-                          "en-IN",
-                        )}
-                      </span>
-                    </span>
-                  </div>
-
-                  {/* Property value input */}
-                  <div>
-                    <Label
-                      htmlFor="regValue"
-                      className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 block"
-                    >
-                      Property Value / ఆస్తి విలువ (₹)
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="regValue"
-                        type="number"
-                        min="0"
-                        step="any"
-                        placeholder="Enter property value in ₹"
-                        value={regPropertyValue}
-                        onChange={(e) => setRegPropertyValue(e.target.value)}
-                        className="flex-1"
-                        data-ocid="reg.property_value.input"
-                      />
-                      {calc && calc.totalValue > 0 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setRegPropertyValue(
-                              String(Math.round(calc.totalValue)),
-                            )
-                          }
-                          className="whitespace-nowrap text-xs"
-                          style={{
-                            borderColor: "rgba(212,128,10,0.4)",
-                            color: "#D4800A",
-                          }}
-                          data-ocid="reg.use_total.secondary_button"
-                        >
-                          Use Calculator Total
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Rates reference */}
-                  <div className="rounded-xl border border-border overflow-hidden">
-                    <div className="px-4 py-2 border-b border-border bg-accent/40">
-                      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                        All Deed Rates Reference
-                      </p>
-                    </div>
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="bg-background">
-                          <th className="py-2 px-3 text-left font-semibold text-muted-foreground">
-                            Deed
-                          </th>
-                          <th className="py-2 px-3 text-center font-semibold text-muted-foreground">
-                            DSD
-                          </th>
-                          <th className="py-2 px-3 text-center font-semibold text-muted-foreground">
-                            R.F
-                          </th>
-                          <th className="py-2 px-3 text-center font-semibold text-muted-foreground">
-                            User Ch.
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(
-                          Object.entries(DEED_RATES) as [DeedType, DeedRates][]
-                        ).map(([deed, rates], i) => (
-                          <tr
-                            key={deed}
-                            className={[
-                              i % 2 === 0 ? "bg-accent/20" : "bg-background",
-                              regDeedType === deed ? "ring-1 ring-inset" : "",
-                            ].join(" ")}
-                            style={
-                              regDeedType === deed
-                                ? { outline: "1px solid rgba(212,128,10,0.4)" }
-                                : {}
-                            }
-                          >
-                            <td className="py-1.5 px-3 font-medium text-foreground">
-                              {deed}
-                            </td>
-                            <td className="py-1.5 px-3 text-center text-muted-foreground">
-                              {rates.dsdPct !== null ? `${rates.dsdPct}%` : "—"}
-                            </td>
-                            <td className="py-1.5 px-3 text-center text-muted-foreground">
-                              {rates.rfPct !== null
-                                ? `${rates.rfPct}%`
-                                : `₹${rates.rfFixed?.toLocaleString("en-IN")}`}
-                            </td>
-                            <td className="py-1.5 px-3 text-center text-muted-foreground">
-                              ₹{rates.userCharges}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Right: Results */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <Card className="shadow-card border-border h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-serif text-foreground">
-                    <Calculator
-                      className="w-5 h-5"
-                      style={{ color: "#D4800A" }}
-                    />
-                    Fee Breakdown / రుసుముల వివరాలు
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <AnimatePresence mode="wait">
-                    {regCalc ? (
-                      <motion.div
-                        key="reg-results"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="space-y-4"
-                        data-ocid="reg_fees.card"
-                      >
-                        {/* Summary cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div className="rounded-xl border border-border bg-background p-4 text-center">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-1">
-                              DSD
-                            </p>
-                            <p className="font-mono text-xl font-bold text-foreground">
-                              {regCalc.dsd !== null
-                                ? formatINR(regCalc.dsd)
-                                : "N/A"}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {DEED_RATES[regDeedType].dsdPct !== null
-                                ? `${DEED_RATES[regDeedType].dsdPct}%`
-                                : "Not applicable"}
-                            </p>
-                          </div>
-                          <div className="rounded-xl border border-border bg-background p-4 text-center">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-1">
-                              R.F
-                            </p>
-                            <p className="font-mono text-xl font-bold text-foreground">
-                              {formatINR(regCalc.rf)}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {DEED_RATES[regDeedType].rfPct !== null
-                                ? `${DEED_RATES[regDeedType].rfPct}%`
-                                : "Fixed"}
-                            </p>
-                          </div>
-                          <div className="rounded-xl border border-border bg-background p-4 text-center">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-1">
-                              User Charges
-                            </p>
-                            <p className="font-mono text-xl font-bold text-foreground">
-                              {formatINR(regCalc.userCharges)}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              Fixed
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Detailed table */}
-                        <div className="rounded-xl border border-border overflow-hidden">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="bg-accent/60 border-b border-primary/20">
-                                <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                  Charge
-                                </th>
-                                <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                  Rate
-                                </th>
-                                <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                  Amount
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr className="border-b border-border/50 bg-background">
-                                <td className="py-2.5 px-4 font-medium text-foreground">
-                                  DSD (Duty Stamp Duty)
-                                </td>
-                                <td className="py-2.5 px-4 text-muted-foreground text-xs">
-                                  {DEED_RATES[regDeedType].dsdPct !== null
-                                    ? `${DEED_RATES[regDeedType].dsdPct}%`
-                                    : "—"}
-                                </td>
-                                <td
-                                  className="py-2.5 px-4 text-right font-semibold"
-                                  style={{ color: "#D4800A" }}
-                                >
-                                  {regCalc.dsd !== null
-                                    ? formatINR(regCalc.dsd)
-                                    : "—"}
-                                </td>
-                              </tr>
-                              <tr className="border-b border-border/50 bg-accent/10">
-                                <td className="py-2.5 px-4 font-medium text-foreground">
-                                  R.F (Registration Fee)
-                                </td>
-                                <td className="py-2.5 px-4 text-muted-foreground text-xs">
-                                  {DEED_RATES[regDeedType].rfPct !== null
-                                    ? `${DEED_RATES[regDeedType].rfPct}%`
-                                    : `₹${DEED_RATES[regDeedType].rfFixed?.toLocaleString("en-IN")} fixed`}
-                                </td>
-                                <td
-                                  className="py-2.5 px-4 text-right font-semibold"
-                                  style={{ color: "#D4800A" }}
-                                >
-                                  {formatINR(regCalc.rf)}
-                                </td>
-                              </tr>
-                              <tr className="border-b border-border/50 bg-background">
-                                <td className="py-2.5 px-4 font-medium text-foreground">
-                                  User Charges
-                                </td>
-                                <td className="py-2.5 px-4 text-muted-foreground text-xs">
-                                  Fixed
-                                </td>
-                                <td
-                                  className="py-2.5 px-4 text-right font-semibold"
-                                  style={{ color: "#D4800A" }}
-                                >
-                                  {formatINR(regCalc.userCharges)}
-                                </td>
-                              </tr>
-                            </tbody>
-                            <tfoot>
-                              <tr
-                                style={{
-                                  backgroundColor: "rgba(212,128,10,0.1)",
-                                  borderTop: "2px solid rgba(212,128,10,0.3)",
-                                }}
-                              >
-                                <td
-                                  colSpan={2}
-                                  className="py-3 px-4 font-mono font-bold text-foreground"
-                                >
-                                  Total Registration Cost
-                                </td>
-                                <td
-                                  className="py-3 px-4 text-right font-mono font-bold text-xl"
-                                  style={{ color: "#D4800A" }}
-                                >
-                                  {formatINR(regCalc.total)}
-                                </td>
-                              </tr>
-                            </tfoot>
-                          </table>
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="reg-empty"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex flex-col items-center justify-center py-16 text-center"
-                        data-ocid="reg_fees.empty_state"
-                      >
-                        <div
-                          className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-                          style={{ backgroundColor: "rgba(212,128,10,0.1)" }}
-                        >
-                          <FileText
-                            className="w-8 h-8"
-                            style={{ color: "#D4800A", opacity: 0.5 }}
-                          />
-                        </div>
-                        <p className="text-muted-foreground font-serif italic">
-                          Enter a property value to calculate fees
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          ఆస్తి విలువ నమోదు చేయండి
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          CONTACT SECTION
-      ═══════════════════════════════════════════════ */}
-      <section id="contact" className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span
-              className="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full"
-              style={{
-                color: "#D4800A",
-                backgroundColor: "rgba(212,128,10,0.1)",
-              }}
-            >
-              ✦ Contact ✦
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-              Get In Touch
-            </h2>
-            <p className="mt-2 text-muted-foreground">సంప్రదించండి</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-            >
-              <a href="tel:+919848872469" className="block h-full">
-                <Card className="h-full border-border hover:border-primary/40 hover:shadow-gold transition-all duration-300 cursor-pointer group">
-                  <CardContent className="pt-8 pb-8 flex flex-col items-center text-center">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
-                      style={{
-                        backgroundColor: "rgba(212,128,10,0.12)",
-                        color: "#D4800A",
-                      }}
-                    >
-                      <Phone className="w-7 h-7" />
-                    </div>
-                    <h3 className="font-serif text-lg font-bold text-foreground mb-1">
-                      Phone
-                    </h3>
-                    <p
-                      className="font-mono font-bold text-lg"
-                      style={{ color: "#D4800A" }}
-                    >
-                      +91 9848872469
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      ఫోన్ చేయండి
-                    </p>
-                  </CardContent>
-                </Card>
-              </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
-              <a
-                href="mailto:nageswaraprasadtv@gmail.com"
-                className="block h-full"
-              >
-                <Card className="h-full border-border hover:border-primary/40 hover:shadow-gold transition-all duration-300 cursor-pointer group">
-                  <CardContent className="pt-8 pb-8 flex flex-col items-center text-center">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
-                      style={{
-                        backgroundColor: "rgba(212,128,10,0.12)",
-                        color: "#D4800A",
-                      }}
-                    >
-                      <Mail className="w-7 h-7" />
-                    </div>
-                    <h3 className="font-serif text-lg font-bold text-foreground mb-1">
-                      Email
-                    </h3>
-                    <p
-                      className="font-bold text-sm"
-                      style={{ color: "#D4800A" }}
-                    >
-                      nageswaraprasadtv@gmail.com
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      ఇమెయిల్ చేయండి
-                    </p>
-                  </CardContent>
-                </Card>
-              </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <Card className="h-full border-border hover:border-primary/40 hover:shadow-gold transition-all duration-300 group">
-                <CardContent className="pt-8 pb-8 flex flex-col items-center text-center">
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
-                    style={{
-                      backgroundColor: "rgba(212,128,10,0.12)",
-                      color: "#D4800A",
-                    }}
-                  >
-                    <MapPin className="w-7 h-7" />
-                  </div>
-                  <h3 className="font-serif text-lg font-bold text-foreground mb-1">
-                    Address
-                  </h3>
-                  <p className="text-sm text-foreground font-bold leading-relaxed">
-                    Shop No-22, Pullareddy Complex,
-                    <br />
-                    Beside Registration Office,
-                    <br />
-                    Near Ravi Priya Mall, Ongole,
-                    <br />
-                    Prakasam Dist, AP - 523002
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowMap(true)}
-                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold hover:underline"
-                    style={{ color: "#D4800A" }}
-                    data-ocid="contact.location.button"
-                  >
-                    <MapPin className="w-3.5 h-3.5" />
-                    View Location / స్థానం చూడండి
-                  </button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
-          {/* Social links */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-10 flex justify-center gap-4"
-          >
-            {[
-              {
-                href: "https://wa.me/919848872469",
-                bg: "#25D366",
-                icon: <WhatsAppIcon />,
-                label: "WhatsApp",
-              },
-              {
-                href: "https://t.me/",
-                bg: "#0088cc",
-                icon: <TelegramIcon />,
-                label: "Telegram",
-              },
-              {
-                href: "https://facebook.com/",
-                bg: "#1877F2",
-                icon: <FacebookIcon />,
-                label: "Facebook",
-              },
-              {
-                href: "https://instagram.com/",
-                bg: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)",
-                icon: <InstagramIcon />,
-                label: "Instagram",
-              },
-              {
-                href: "https://twitter.com/",
-                bg: "#000000",
-                icon: <TwitterXIcon />,
-                label: "Twitter/X",
-              },
-            ].map((sm) => (
-              <a
-                key={sm.label}
-                href={sm.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={sm.label}
-                title={sm.label}
-                className="w-11 h-11 rounded-full flex items-center justify-center text-white hover:opacity-85 hover:scale-110 transition-all duration-200 shadow-md"
-                style={{ background: sm.bg }}
-              >
-                <span className="sr-only">{sm.label}</span>
-                {sm.icon}
-              </a>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          FOOTER
-      ═══════════════════════════════════════════════ */}
+      {/* FOOTER */}
       <footer
-        className="bg-card border-t-2 py-10"
-        style={{ borderColor: "rgba(212,128,10,0.25)" }}
+        className="flex-shrink-0 flex items-center justify-between px-3 sm:px-5 border-t gap-2"
+        style={{
+          height: "46px",
+          backgroundColor: "oklch(var(--card))",
+          borderColor: "rgba(212,128,10,0.3)",
+        }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {/* Brand */}
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-12 h-12 rounded-full border-2 overflow-hidden flex-shrink-0"
-                  style={{ borderColor: "#D4800A" }}
-                >
-                  <img
-                    src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
-                    alt="Proprietor"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-                <div>
-                  <p
-                    className="font-serif font-bold text-base leading-tight"
-                    style={{ color: "#D4800A" }}
-                  >
-                    Lakshmi Ganapathi
-                  </p>
-                  <p className="font-serif text-sm text-muted-foreground">
-                    Communications
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm font-bold" style={{ color: "#D4800A" }}>
-                Prop: Tiruvaipati Venkata Nageswara Prasad
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 italic font-serif">
-                "Measure with precision, plan with wisdom"
-              </p>
-            </div>
-
-            {/* Address */}
-            <div>
-              <h4 className="font-serif font-bold text-sm text-foreground mb-3 uppercase tracking-wide">
-                Address
-              </h4>
-              <div className="flex gap-2">
-                <MapPin
-                  className="w-4 h-4 flex-shrink-0 mt-0.5"
-                  style={{ color: "#D4800A" }}
-                />
-                <p className="text-sm font-bold text-foreground leading-relaxed">
-                  Shop No-22, Pullareddy Complex,
-                  <br />
-                  Beside Registration Office,
-                  <br />
-                  Near Ravi Priya Mall, Ongole,
-                  <br />
-                  Prakasam Dist, Andhra Pradesh,
-                  <br />
-                  Pin - 523002
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowMap(true)}
-                className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold hover:underline"
-                style={{ color: "#D4800A" }}
-                data-ocid="footer.location.button"
-              >
-                <MapPin className="w-3 h-3" />
-                View Location / స్థానం చూడండి
-              </button>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h4 className="font-serif font-bold text-sm text-foreground mb-3 uppercase tracking-wide">
-                Contact
-              </h4>
-              <div className="space-y-2">
-                <a
-                  href="tel:+919848872469"
-                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                >
-                  <Phone className="w-4 h-4" style={{ color: "#D4800A" }} />
-                  <span
-                    className="font-mono font-bold"
-                    style={{ color: "#D4800A" }}
-                  >
-                    +91 9848872469
-                  </span>
-                </a>
-                <a
-                  href="mailto:nageswaraprasadtv@gmail.com"
-                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                >
-                  <Mail className="w-4 h-4" style={{ color: "#D4800A" }} />
-                  <span className="font-bold text-sm text-foreground">
-                    nageswaraprasadtv@gmail.com
-                  </span>
-                </a>
-              </div>
-              {/* Social icons */}
-              <div className="flex gap-2 mt-4">
-                {[
-                  {
-                    href: "https://wa.me/919848872469",
-                    bg: "#25D366",
-                    icon: <WhatsAppIcon />,
-                    label: "WhatsApp",
-                  },
-                  {
-                    href: "https://t.me/",
-                    bg: "#0088cc",
-                    icon: <TelegramIcon />,
-                    label: "Telegram",
-                  },
-                  {
-                    href: "https://facebook.com/",
-                    bg: "#1877F2",
-                    icon: <FacebookIcon />,
-                    label: "Facebook",
-                  },
-                  {
-                    href: "https://instagram.com/",
-                    bg: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)",
-                    icon: <InstagramIcon />,
-                    label: "Instagram",
-                  },
-                  {
-                    href: "https://twitter.com/",
-                    bg: "#000000",
-                    icon: <TwitterXIcon />,
-                    label: "Twitter/X",
-                  },
-                ].map((sm) => (
-                  <a
-                    key={sm.label}
-                    href={sm.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={sm.label}
-                    title={sm.label}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-white hover:opacity-80 hover:scale-110 transition-all duration-200"
-                    style={{ background: sm.bg }}
-                  >
-                    <span className="sr-only">{sm.label}</span>
-                    {sm.icon}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <Separator className="mb-6" />
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-            <p>
-              © {new Date().getFullYear()} Lakshmi Ganapathi Communications. All
-              rights reserved.
-            </p>
-            <p>
-              Built with love using{" "}
-              <a
-                href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline"
-                style={{ color: "#D4800A" }}
-              >
-                caffeine.ai
-              </a>
-            </p>
-          </div>
+        <p
+          className="text-xs font-bold truncate hidden sm:block"
+          style={{ color: "#D4800A" }}
+        >
+          Prop: T.V. Nageswara Prasad | Ongole, AP
+        </p>
+        <div className="flex items-center gap-1.5">
+          {SOCIAL_LINKS.map((sm) => (
+            <a
+              key={sm.label}
+              href={sm.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={sm.label}
+              title={sm.label}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-white hover:opacity-85 hover:scale-110 transition-all duration-200"
+              style={{ background: sm.bg }}
+            >
+              <span className="sr-only">{sm.label}</span>
+              {sm.icon}
+            </a>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowMap(true)}
+            className="flex items-center gap-1 text-xs font-bold hover:underline"
+            style={{ color: "#D4800A" }}
+            data-ocid="footer.location.button"
+          >
+            <MapPin className="w-3 h-3" />
+            <span className="hidden sm:inline">View Location</span>
+          </button>
+          <span className="text-xs text-muted-foreground hidden md:inline">
+            © {new Date().getFullYear()}{" "}
+            <a
+              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+              style={{ color: "#D4800A" }}
+            >
+              caffeine.ai
+            </a>
+          </span>
         </div>
       </footer>
 
-      {/* ═══════════════════════════════════════════════
-          MAP MODAL
-      ═══════════════════════════════════════════════ */}
+      {/* MAP MODAL */}
       <AnimatePresence>
         {showMap && (
           <motion.div
@@ -1925,6 +618,963 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+// ─── Home Tab ─────────────────────────────────────────────────────────────────
+
+function HomeTab() {
+  return (
+    <div className="p-3 sm:p-4 space-y-4">
+      <div
+        className="w-full rounded-xl overflow-hidden border border-border"
+        style={{ height: "22vh", minHeight: "120px" }}
+      >
+        <img
+          src="/assets/uploads/d3911ffd02da7e389eb7e2bfd77965c8-019d2a3e-9149-703a-b7f3-dd338325d17f-1.jpg"
+          alt="Banner"
+          className="w-full h-full object-cover object-center"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[
+          {
+            title: "Unit Conversion",
+            telugu: "యూనిట్ మార్పిడి",
+            desc: "Sq Ft, Yards, Meters, Gadi, Guntha, Cents, Bigha, Acre, Hectare",
+            icon: <Ruler className="w-5 h-5" />,
+          },
+          {
+            title: "Registration Fees",
+            telugu: "నమోదు రుసుములు",
+            desc: "DSD, R.F and User Charges for all deed types",
+            icon: <FileText className="w-5 h-5" />,
+          },
+          {
+            title: "Bilingual Interface",
+            telugu: "ద్విభాషా ఇంటర్ఫేస్",
+            desc: "English + Telugu labels for all fields and results",
+            icon: <Calculator className="w-5 h-5" />,
+          },
+        ].map((svc) => (
+          <Card
+            key={svc.title}
+            className="border-border hover:border-primary/40 transition-all duration-200"
+          >
+            <CardContent className="pt-4 pb-4 flex items-start gap-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{
+                  backgroundColor: "rgba(212,128,10,0.12)",
+                  color: "#D4800A",
+                }}
+              >
+                {svc.icon}
+              </div>
+              <div>
+                <p className="font-bold text-sm text-foreground">{svc.title}</p>
+                <p className="text-xs font-bold" style={{ color: "#D4800A" }}>
+                  {svc.telugu}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {svc.desc}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="rounded-xl border border-border overflow-hidden">
+        <div
+          className="px-4 py-2.5 border-b"
+          style={{ backgroundColor: "rgba(212,128,10,0.06)" }}
+        >
+          <h3 className="font-bold text-sm text-foreground">
+            Unit Reference / యూనిట్ సూచన
+          </h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-accent/40">
+                <th className="py-2 px-4 text-left font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+                  Unit / యూనిట్
+                </th>
+                <th className="py-2 px-4 text-left font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+                  Equivalent in Sq Ft
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { unit: "Sq Ft / చ.అ", val: "1 sq ft" },
+                { unit: "Sq Yards / చ.గ", val: "9 sq ft" },
+                { unit: "Sq Meters / చ.మీ", val: "10.7639 sq ft" },
+                { unit: "Gadi / గడి", val: "72 sq ft (= 8 sq yd)" },
+                { unit: "Guntha / గుంట", val: "1,089 sq ft" },
+                { unit: "Cents / సెంట్", val: "435.6 sq ft" },
+                { unit: "Bigha / బిఘా", val: "14,400 sq ft" },
+                { unit: "Acre / ఎకరం", val: "43,560 sq ft" },
+                { unit: "Hectare / హెక్టార్", val: "1,07,639 sq ft" },
+              ].map((row, i) => (
+                <tr
+                  key={row.unit}
+                  className={i % 2 === 0 ? "bg-background" : "bg-accent/20"}
+                >
+                  <td className="py-2 px-4 font-bold text-foreground text-xs">
+                    {row.unit}
+                  </td>
+                  <td className="py-2 px-4 text-muted-foreground text-xs">
+                    {row.val}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Calculator Tab ───────────────────────────────────────────────────────────
+
+interface CalculatorTabProps {
+  propertyType: PropertyType;
+  setPropertyType: (v: PropertyType) => void;
+  east: string;
+  setEast: (v: string) => void;
+  west: string;
+  setWest: (v: string) => void;
+  north: string;
+  setNorth: (v: string) => void;
+  south: string;
+  setSouth: (v: string) => void;
+  unit: Unit;
+  setUnit: (v: Unit) => void;
+  unitRate: string;
+  setUnitRate: (v: string) => void;
+  roomsCount: string;
+  setRoomsCount: (v: string) => void;
+  calc: CalcResult | null;
+}
+
+function CalculatorTab({
+  propertyType,
+  setPropertyType,
+  east,
+  setEast,
+  west,
+  setWest,
+  north,
+  setNorth,
+  south,
+  setSouth,
+  unit,
+  setUnit,
+  unitRate,
+  setUnitRate,
+  roomsCount,
+  setRoomsCount,
+  calc,
+}: CalculatorTabProps) {
+  return (
+    <div className="p-3 sm:p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="border-border bg-card">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-serif text-foreground">
+              <Calculator className="w-4 h-4" style={{ color: "#D4800A" }} />
+              Enter Measurements / కొలతలు నమోదు చేయండి
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 px-4 pb-4">
+            <div>
+              <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1.5 block">
+                Property Type / ఆస్తి రకం
+              </Label>
+              <div className="flex gap-1.5 flex-wrap">
+                {(["Agricultural Land", "Land", "Room"] as PropertyType[]).map(
+                  (pt) => (
+                    <button
+                      key={pt}
+                      type="button"
+                      onClick={() => setPropertyType(pt)}
+                      data-ocid={`calc.${pt.toLowerCase().replace(/ /g, "_")}.toggle`}
+                      className="px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border"
+                      style={
+                        propertyType === pt
+                          ? {
+                              backgroundColor: "#D4800A",
+                              color: "white",
+                              borderColor: "#D4800A",
+                            }
+                          : {
+                              backgroundColor: "transparent",
+                              borderColor: "oklch(var(--border))",
+                            }
+                      }
+                    >
+                      {pt}
+                    </button>
+                  ),
+                )}
+              </div>
+            </div>
+
+            {propertyType === "Room" && (
+              <div>
+                <Label
+                  htmlFor="rooms"
+                  className="text-xs font-bold text-foreground mb-1 block"
+                >
+                  Number of Rooms / గదుల సంఖ్య
+                </Label>
+                <Input
+                  id="rooms"
+                  type="number"
+                  min="1"
+                  value={roomsCount}
+                  onChange={(e) => setRoomsCount(e.target.value)}
+                  className="w-28 h-8"
+                  data-ocid="calc.rooms.input"
+                />
+              </div>
+            )}
+
+            <div>
+              <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1.5 block">
+                Dimensions / కొలతలు
+              </Label>
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    {
+                      label: "East / తూర్పు",
+                      val: east,
+                      set: setEast,
+                      id: "east",
+                    },
+                    {
+                      label: "West / పడమర",
+                      val: west,
+                      set: setWest,
+                      id: "west",
+                    },
+                    {
+                      label: "North / ఉత్తర",
+                      val: north,
+                      set: setNorth,
+                      id: "north",
+                    },
+                    {
+                      label: "South / దక్షిణ",
+                      val: south,
+                      set: setSouth,
+                      id: "south",
+                    },
+                  ] as const
+                ).map(({ label, val, set, id }) => (
+                  <div key={id}>
+                    <Label
+                      htmlFor={id}
+                      className="text-xs font-bold text-foreground mb-1 block"
+                    >
+                      {label}
+                    </Label>
+                    <Input
+                      id={id}
+                      type="number"
+                      min="0"
+                      step="any"
+                      placeholder="0.00"
+                      value={val}
+                      onChange={(e) => set(e.target.value)}
+                      className="h-8"
+                      data-ocid={`calc.${id}.input`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1.5 block">
+                  Unit / యూనిట్
+                </Label>
+                <Select value={unit} onValueChange={(v) => setUnit(v as Unit)}>
+                  <SelectTrigger className="h-8" data-ocid="calc.unit.select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(
+                      [
+                        ["Sq Ft", "Sq Ft / చ.అ"],
+                        ["Sq Yards", "Sq Yards / చ.గ"],
+                        ["Sq Meters", "Sq Meters / చ.మీ"],
+                        ["Gadi", "Gadi / గడి"],
+                        ["Guntha", "Guntha / గుంట"],
+                        ["Cents", "Cents / సెంట్"],
+                        ["Bigha", "Bigha / బిఘా"],
+                        ["Acre", "Acre / ఎకరం"],
+                        ["Hectare", "Hectare / హెక్టార్"],
+                      ] as [Unit, string][]
+                    ).map(([v, lbl]) => (
+                      <SelectItem key={v} value={v}>
+                        {lbl}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label
+                  htmlFor="unitRate"
+                  className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1.5 block"
+                >
+                  Rate (₹) / రేటు
+                </Label>
+                <Input
+                  id="unitRate"
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="₹ per unit"
+                  value={unitRate}
+                  onChange={(e) => setUnitRate(e.target.value)}
+                  className="h-8"
+                  data-ocid="calc.unit_rate.input"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border bg-card">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-serif text-foreground">
+              <Ruler className="w-4 h-4" style={{ color: "#D4800A" }} />
+              Live Results / తక్షణ ఫలితాలు
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <AnimatePresence mode="wait">
+              {calc ? (
+                <motion.div
+                  key="results"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-3"
+                  data-ocid="results.card"
+                >
+                  <div
+                    className="rounded-lg p-3 text-center border"
+                    style={{
+                      backgroundColor: "rgba(212,128,10,0.08)",
+                      borderColor: "rgba(212,128,10,0.3)",
+                    }}
+                  >
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                      Total Area / మొత్తం విస్తీర్ణం ({unit})
+                    </p>
+                    <p
+                      className="font-mono text-3xl font-bold"
+                      style={{ color: "#D4800A" }}
+                    >
+                      {formatArea(calc.areaInUnit)}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1">
+                    {[
+                      {
+                        label: "Square Feet / చదరపు అడుగులు",
+                        value: calc.sqFt,
+                        suffix: "sq ft",
+                      },
+                      {
+                        label: "Square Yards / చ.గజాలు",
+                        value: calc.sqYards,
+                        suffix: "sq yds",
+                      },
+                      {
+                        label: "Square Meters / చదరపు మీటర్లు",
+                        value: calc.sqMeters,
+                        suffix: "sq m",
+                      },
+                      { label: "Gadi / గడి", value: calc.gadi, suffix: "gadi" },
+                      {
+                        label: "Acre / ఎకరం",
+                        value: calc.acre,
+                        suffix: "acre",
+                      },
+                      {
+                        label: "Hectare / హెక్టార్",
+                        value: calc.hectare,
+                        suffix: "ha",
+                      },
+                      {
+                        label: "Guntha / గుంట",
+                        value: calc.guntha,
+                        suffix: "guntha",
+                      },
+                      {
+                        label: "Cents / సెంట్",
+                        value: calc.cents,
+                        suffix: "cents",
+                      },
+                      {
+                        label: "Bigha / బిఘా",
+                        value: calc.bigha,
+                        suffix: "bigha",
+                      },
+                    ].map(({ label, value, suffix }) => (
+                      <div
+                        key={label}
+                        className="flex justify-between items-center py-1.5 px-3 rounded-lg bg-background border border-border text-xs"
+                      >
+                        <span className="text-muted-foreground font-bold">
+                          {label}
+                        </span>
+                        <span className="font-semibold text-foreground">
+                          {formatArea(value)}{" "}
+                          <span className="text-muted-foreground">
+                            {suffix}
+                          </span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {Number.parseFloat(unitRate) > 0 && (
+                    <div
+                      className="rounded-lg p-3 text-center border"
+                      style={{
+                        backgroundColor: "rgba(212,128,10,0.06)",
+                        borderColor: "rgba(212,128,10,0.3)",
+                      }}
+                    >
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                        Estimated Value / అంచనా విలువ
+                      </p>
+                      <p
+                        className="font-mono text-2xl font-bold"
+                        style={{ color: "#D4800A" }}
+                      >
+                        {formatINR(calc.totalValue)}
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center py-12 text-center"
+                  data-ocid="results.empty_state"
+                >
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
+                    style={{ backgroundColor: "rgba(212,128,10,0.1)" }}
+                  >
+                    <Ruler
+                      className="w-7 h-7"
+                      style={{ color: "#D4800A", opacity: 0.5 }}
+                    />
+                  </div>
+                  <p className="text-muted-foreground font-serif italic text-sm">
+                    Enter measurements to see live results
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    కొలతలు నమోదు చేయండి
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ─── Reg Fees Tab ─────────────────────────────────────────────────────────────
+
+interface RegFeesTabProps {
+  regDeedType: DeedType;
+  setRegDeedType: (v: DeedType) => void;
+  regPropertyValue: string;
+  setRegPropertyValue: (v: string) => void;
+  regCalc: {
+    dsd: number | null;
+    rf: number;
+    userCharges: number;
+    total: number;
+  } | null;
+  calc: CalcResult | null;
+}
+
+function RegFeesTab({
+  regDeedType,
+  setRegDeedType,
+  regPropertyValue,
+  setRegPropertyValue,
+  regCalc,
+  calc,
+}: RegFeesTabProps) {
+  return (
+    <div className="p-3 sm:p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="border-border">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-serif text-foreground">
+              <FileText className="w-4 h-4" style={{ color: "#D4800A" }} />
+              Select Deed Type / డీడ్ రకం
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 px-4 pb-4">
+            <div>
+              <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1.5 block">
+                Deed Type / పత్రం రకం
+              </Label>
+              <Select
+                value={regDeedType}
+                onValueChange={(v) => setRegDeedType(v as DeedType)}
+              >
+                <SelectTrigger className="h-8" data-ocid="reg.deed_type.select">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.keys(DEED_RATES) as DeedType[]).map((deed) => (
+                    <SelectItem key={deed} value={deed}>
+                      {deed}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-background border border-border text-xs">
+                <span className="font-bold text-foreground">DSD:</span>
+                <span className="text-muted-foreground">
+                  {DEED_RATES[regDeedType].dsdPct !== null
+                    ? `${DEED_RATES[regDeedType].dsdPct}%`
+                    : "N/A"}
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-background border border-border text-xs">
+                <span className="font-bold text-foreground">R.F:</span>
+                <span className="text-muted-foreground">
+                  {DEED_RATES[regDeedType].rfPct !== null
+                    ? `${DEED_RATES[regDeedType].rfPct}%`
+                    : `₹${DEED_RATES[regDeedType].rfFixed?.toLocaleString("en-IN")} fixed`}
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-background border border-border text-xs">
+                <span className="font-bold text-foreground">User Ch.:</span>
+                <span className="text-muted-foreground">
+                  ₹{DEED_RATES[regDeedType].userCharges}
+                </span>
+              </span>
+            </div>
+
+            <div>
+              <Label
+                htmlFor="regValue"
+                className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1.5 block"
+              >
+                Property Value / ఆస్తి విలువ (₹)
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="regValue"
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="Enter property value in ₹"
+                  value={regPropertyValue}
+                  onChange={(e) => setRegPropertyValue(e.target.value)}
+                  className="flex-1 h-8"
+                  data-ocid="reg.property_value.input"
+                />
+                {calc && calc.totalValue > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setRegPropertyValue(String(Math.round(calc.totalValue)))
+                    }
+                    className="whitespace-nowrap text-xs h-8"
+                    style={{
+                      borderColor: "rgba(212,128,10,0.4)",
+                      color: "#D4800A",
+                    }}
+                    data-ocid="reg.use_total.secondary_button"
+                  >
+                    Use Calc Total
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border overflow-hidden">
+              <div className="px-3 py-1.5 border-b bg-accent/40">
+                <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  All Rates Reference
+                </p>
+              </div>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-background">
+                    <th className="py-1.5 px-3 text-left font-semibold text-muted-foreground">
+                      Deed
+                    </th>
+                    <th className="py-1.5 px-3 text-center font-semibold text-muted-foreground">
+                      DSD
+                    </th>
+                    <th className="py-1.5 px-3 text-center font-semibold text-muted-foreground">
+                      R.F
+                    </th>
+                    <th className="py-1.5 px-3 text-center font-semibold text-muted-foreground">
+                      UC
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(Object.entries(DEED_RATES) as [DeedType, DeedRates][]).map(
+                    ([deed, rates], i) => (
+                      <tr
+                        key={deed}
+                        className={
+                          i % 2 === 0 ? "bg-accent/20" : "bg-background"
+                        }
+                        style={
+                          regDeedType === deed
+                            ? { outline: "1px solid rgba(212,128,10,0.4)" }
+                            : {}
+                        }
+                      >
+                        <td className="py-1 px-3 font-medium text-foreground">
+                          {deed}
+                        </td>
+                        <td className="py-1 px-3 text-center text-muted-foreground">
+                          {rates.dsdPct !== null ? `${rates.dsdPct}%` : "—"}
+                        </td>
+                        <td className="py-1 px-3 text-center text-muted-foreground">
+                          {rates.rfPct !== null
+                            ? `${rates.rfPct}%`
+                            : `₹${rates.rfFixed?.toLocaleString("en-IN")}`}
+                        </td>
+                        <td className="py-1 px-3 text-center text-muted-foreground">
+                          ₹{rates.userCharges}
+                        </td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <CardTitle className="flex items-center gap-2 text-sm font-serif text-foreground">
+              <Calculator className="w-4 h-4" style={{ color: "#D4800A" }} />
+              Fee Breakdown / రుసుముల వివరాలు
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <AnimatePresence mode="wait">
+              {regCalc ? (
+                <motion.div
+                  key="reg-results"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-4"
+                  data-ocid="reg_fees.card"
+                >
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-xl border border-border bg-background p-3 text-center">
+                      <p className="text-xs font-bold text-muted-foreground uppercase mb-0.5">
+                        DSD
+                      </p>
+                      <p className="font-mono text-base font-bold text-foreground">
+                        {regCalc.dsd !== null ? formatINR(regCalc.dsd) : "N/A"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {DEED_RATES[regDeedType].dsdPct !== null
+                          ? `${DEED_RATES[regDeedType].dsdPct}%`
+                          : "N/A"}
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-border bg-background p-3 text-center">
+                      <p className="text-xs font-bold text-muted-foreground uppercase mb-0.5">
+                        R.F
+                      </p>
+                      <p className="font-mono text-base font-bold text-foreground">
+                        {formatINR(regCalc.rf)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {DEED_RATES[regDeedType].rfPct !== null
+                          ? `${DEED_RATES[regDeedType].rfPct}%`
+                          : "Fixed"}
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-border bg-background p-3 text-center">
+                      <p className="text-xs font-bold text-muted-foreground uppercase mb-0.5">
+                        User Ch.
+                      </p>
+                      <p className="font-mono text-base font-bold text-foreground">
+                        {formatINR(regCalc.userCharges)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Fixed</p>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div
+                    className="rounded-xl p-4 text-center border"
+                    style={{
+                      backgroundColor: "rgba(212,128,10,0.08)",
+                      borderColor: "rgba(212,128,10,0.4)",
+                    }}
+                  >
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                      Total Fees / మొత్తం రుసుమలు
+                    </p>
+                    <p
+                      className="font-mono text-3xl font-bold"
+                      style={{ color: "#D4800A" }}
+                    >
+                      {formatINR(regCalc.total)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-accent/60 border-b border-border">
+                          <th className="py-2 px-4 text-left text-xs font-semibold text-muted-foreground uppercase">
+                            Item
+                          </th>
+                          <th className="py-2 px-4 text-right text-xs font-semibold text-muted-foreground uppercase">
+                            Amount
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-border">
+                          <td className="py-2 px-4 font-bold text-foreground text-sm">
+                            DSD / డాక్యుమెంట్ స్టాంప్ డ్యూటీ
+                          </td>
+                          <td className="py-2 px-4 text-right font-mono font-semibold text-sm">
+                            {regCalc.dsd !== null
+                              ? formatINR(regCalc.dsd)
+                              : "—"}
+                          </td>
+                        </tr>
+                        <tr className="border-b border-border">
+                          <td className="py-2 px-4 font-bold text-foreground text-sm">
+                            R.F / రిజిస్ట్రేషన్ ఫీజు
+                          </td>
+                          <td className="py-2 px-4 text-right font-mono font-semibold text-sm">
+                            {formatINR(regCalc.rf)}
+                          </td>
+                        </tr>
+                        <tr className="border-b border-border">
+                          <td className="py-2 px-4 font-bold text-foreground text-sm">
+                            User Charges / వినియోగదారు రుసుము
+                          </td>
+                          <td className="py-2 px-4 text-right font-mono font-semibold text-sm">
+                            {formatINR(regCalc.userCharges)}
+                          </td>
+                        </tr>
+                        <tr
+                          style={{ backgroundColor: "rgba(212,128,10,0.06)" }}
+                        >
+                          <td className="py-2.5 px-4 font-bold text-foreground">
+                            Total / మొత్తం
+                          </td>
+                          <td
+                            className="py-2.5 px-4 text-right font-mono font-bold"
+                            style={{ color: "#D4800A" }}
+                          >
+                            {formatINR(regCalc.total)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="reg-empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center py-12 text-center"
+                  data-ocid="reg_fees.empty_state"
+                >
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
+                    style={{ backgroundColor: "rgba(212,128,10,0.1)" }}
+                  >
+                    <FileText
+                      className="w-7 h-7"
+                      style={{ color: "#D4800A", opacity: 0.5 }}
+                    />
+                  </div>
+                  <p className="text-muted-foreground font-serif italic text-sm">
+                    Enter property value to calculate fees
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    ఆస్తి విలువ నమోదు చేయండి
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ─── Contact Tab ──────────────────────────────────────────────────────────────
+
+function ContactTab({ onViewMap }: { onViewMap: () => void }) {
+  return (
+    <div className="p-3 sm:p-4 max-w-3xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a href="tel:+919848872469" className="block">
+          <Card className="h-full border-border hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer group">
+            <CardContent className="pt-5 pb-5 flex flex-col items-center text-center">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
+                style={{
+                  backgroundColor: "rgba(212,128,10,0.12)",
+                  color: "#D4800A",
+                }}
+              >
+                <Phone className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground mb-1">Phone</h3>
+              <p
+                className="font-mono font-bold text-sm"
+                style={{ color: "#D4800A" }}
+              >
+                +91 9848872469
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">ఫోన్ చేయండి</p>
+            </CardContent>
+          </Card>
+        </a>
+
+        <a href="mailto:nageswaraprasadtv@gmail.com" className="block">
+          <Card className="h-full border-border hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer group">
+            <CardContent className="pt-5 pb-5 flex flex-col items-center text-center">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
+                style={{
+                  backgroundColor: "rgba(212,128,10,0.12)",
+                  color: "#D4800A",
+                }}
+              >
+                <Mail className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground mb-1">Email</h3>
+              <p className="font-bold text-xs" style={{ color: "#D4800A" }}>
+                nageswaraprasadtv@gmail.com
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">ఇమెయిల్ చేయండి</p>
+            </CardContent>
+          </Card>
+        </a>
+
+        <Card className="border-border hover:border-primary/40 hover:shadow-sm transition-all group">
+          <CardContent className="pt-5 pb-5 flex flex-col items-center text-center">
+            <div
+              className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
+              style={{
+                backgroundColor: "rgba(212,128,10,0.12)",
+                color: "#D4800A",
+              }}
+            >
+              <MapPin className="w-6 h-6" />
+            </div>
+            <h3 className="font-bold text-sm text-foreground mb-1">Address</h3>
+            <p className="text-xs font-bold text-foreground leading-relaxed">
+              Shop No-22, Pullareddy Complex,
+              <br />
+              Beside Registration Office,
+              <br />
+              Near Ravi Priya Mall, Ongole,
+              <br />
+              Prakasam Dist, AP - 523002
+            </p>
+            <button
+              type="button"
+              onClick={onViewMap}
+              className="mt-2 inline-flex items-center gap-1 text-xs font-bold hover:underline"
+              style={{ color: "#D4800A" }}
+              data-ocid="contact.location.button"
+            >
+              <MapPin className="w-3 h-3" />
+              View Location / స్థానం చూడండి
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-5 flex justify-center gap-3">
+        {SOCIAL_LINKS.map((sm) => (
+          <a
+            key={sm.label}
+            href={sm.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={sm.label}
+            title={sm.label}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-white hover:opacity-85 hover:scale-110 transition-all duration-200 shadow-md"
+            style={{ background: sm.bg }}
+          >
+            <span className="sr-only">{sm.label}</span>
+            {sm.icon}
+          </a>
+        ))}
+      </div>
+
+      <Card className="mt-4 border-border">
+        <CardContent className="pt-4 pb-4">
+          <p className="text-xs font-bold" style={{ color: "#D4800A" }}>
+            Prop: Tiruvaipati Venkata Nageswara Prasad
+          </p>
+          <p className="text-xs text-foreground font-bold mt-1">
+            Shop No-22, Pullareddy Complex, Beside Registration Office, Near
+            Ravi Priya Mall, Ongole, Prakasam Dist, Andhra Pradesh, Pin - 523002
+          </p>
+          <p className="mt-2">
+            <a
+              href="tel:+919848872469"
+              className="font-mono font-bold text-xs hover:underline"
+              style={{ color: "#D4800A" }}
+            >
+              +91 9848872469
+            </a>
+            {" · "}
+            <a
+              href="mailto:nageswaraprasadtv@gmail.com"
+              className="font-bold text-xs hover:underline text-foreground"
+            >
+              nageswaraprasadtv@gmail.com
+            </a>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
