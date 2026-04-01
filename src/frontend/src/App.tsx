@@ -31,6 +31,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { PasswordGate } from "./components/PasswordGate";
 import {
   useAddEntry,
   useClearEntries,
@@ -258,6 +259,7 @@ function TwitterXIcon() {
 // ─── App Component ────────────────────────────────────────────────────────────
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   // ── Form state ──
   const [propertyType, setPropertyType] = useState<PropertyType>("Land");
   const [east, setEast] = useState("");
@@ -421,12 +423,15 @@ export default function App() {
   }
 
   const navLinks = [
-    { label: "Home", id: "hero" },
-    { label: "Services", id: "services" },
-    { label: "Calculator", id: "calculator" },
-    { label: "Reg. Fees", id: "registration" },
-    { label: "Contact", id: "contact" },
+    { label: "Home / హోమ్", id: "hero" },
+    { label: "Services / సేవలు", id: "services" },
+    { label: "Calculator / లెక్కింపు", id: "calculator" },
+    { label: "Reg. Fees / నమోదు రుసుమু", id: "registration" },
+    { label: "Contact / సంప్రదించండి", id: "contact" },
   ];
+
+  if (!isAuthenticated)
+    return <PasswordGate onSuccess={() => setIsAuthenticated(true)} />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -468,7 +473,7 @@ export default function App() {
                   type="button"
                   onClick={() => scrollTo(link.id)}
                   className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/60 rounded-md transition-all duration-150"
-                  data-ocid={`nav.${link.label.toLowerCase().replace(/[. ]/g, "_")}.link`}
+                  data-ocid={`nav.${link.id}.link`}
                 >
                   {link.label}
                 </button>
