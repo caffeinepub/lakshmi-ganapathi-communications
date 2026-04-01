@@ -411,7 +411,7 @@ export default function App() {
       <section
         id="hero"
         className="relative flex flex-col"
-        style={{ minHeight: "40vh", maxHeight: "50vh" }}
+        style={{ minHeight: "100vh", maxHeight: "100vh" }}
       >
         {/* Full-width banner background */}
         <div className="absolute inset-0 overflow-hidden">
