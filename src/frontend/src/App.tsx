@@ -17,26 +17,17 @@ import {
   ClipboardList,
   FileText,
   Home,
-  ListOrdered,
   Mail,
   MapPin,
   Menu,
   Phone,
-  PlusCircle,
-  RefreshCw,
   Ruler,
-  Trash2,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PasswordGate } from "./components/PasswordGate";
-import {
-  useAddEntry,
-  useClearEntries,
-  useGetAllEntries,
-} from "./hooks/useQueries";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,20 +42,6 @@ type Unit =
   | "Guntha"
   | "Cents"
   | "Bigha";
-
-interface LocalEntry {
-  id: string;
-  propertyType: PropertyType;
-  east: number;
-  west: number;
-  north: number;
-  south: number;
-  unit: Unit;
-  unitRate: number;
-  roomsCount: number;
-  totalArea: number;
-  totalValue: number;
-}
 
 // ─── Conversion Utilities ─────────────────────────────────────────────────────
 
@@ -274,16 +251,8 @@ export default function App() {
   const [regDeedType, setRegDeedType] = useState<DeedType>("Sale Deed");
   const [regPropertyValue, setRegPropertyValue] = useState("");
 
-  // ── Local entries state ──
-  const [localEntries, setLocalEntries] = useState<LocalEntry[]>([]);
   const [showMap, setShowMap] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // ── Backend hooks ──
-  const { data: backendEntries, isLoading: entriesLoading } =
-    useGetAllEntries();
-  const addEntryMutation = useAddEntry();
-  const clearEntriesMutation = useClearEntries();
 
   // ── Live calculations ──
   const calc = useMemo(() => {
@@ -297,103 +266,6 @@ export default function App() {
     const areas = computeArea(e, w, n, s, unit, rooms, propertyType);
     return { ...areas, totalValue: areas.areaInUnit * rate };
   }, [east, west, north, south, unit, unitRate, roomsCount, propertyType]);
-
-  // ── Combine backend + local entries ──
-  const displayEntries = useMemo<LocalEntry[]>(() => {
-    if (backendEntries && backendEntries.length > 0) {
-      return backendEntries.map((e, i) => ({
-        id: `backend-${i}-${e.timestamp}`,
-        propertyType: e.propertyType as PropertyType,
-        east: e.east,
-        west: e.west,
-        north: e.north,
-        south: e.south,
-        unit: e.unit as Unit,
-        unitRate: e.unitRate,
-        roomsCount: Number(e.roomsCount),
-        totalArea: e.totalArea,
-        totalValue: e.totalValue,
-      }));
-    }
-    return localEntries;
-  }, [backendEntries, localEntries]);
-
-  // ── Add entry ──
-  function handleAddEntry() {
-    const e = Number.parseFloat(east);
-    const w = Number.parseFloat(west);
-    const n = Number.parseFloat(north);
-    const s = Number.parseFloat(south);
-    if (!e || !w || !n || !s) {
-      toast.error("Please fill in all four directional measurements.");
-      return;
-    }
-    const rate = Number.parseFloat(unitRate) || 0;
-    const rooms = Number.parseInt(roomsCount) || 1;
-    const areas = computeArea(e, w, n, s, unit, rooms, propertyType);
-    const totalValue = areas.areaInUnit * rate;
-    const newEntry: LocalEntry = {
-      id: `local-${Date.now()}`,
-      propertyType,
-      east: e,
-      west: w,
-      north: n,
-      south: s,
-      unit,
-      unitRate: rate,
-      roomsCount: rooms,
-      totalArea: areas.areaInUnit,
-      totalValue,
-    };
-    addEntryMutation.mutate(
-      {
-        propertyType,
-        east: e,
-        west: w,
-        north: n,
-        south: s,
-        unit,
-        unitRate: rate,
-        roomsCount: BigInt(rooms),
-        totalArea: areas.areaInUnit,
-        totalValue,
-      },
-      { onError: () => setLocalEntries((prev) => [...prev, newEntry]) },
-    );
-    if (!backendEntries || backendEntries.length === 0) {
-      setLocalEntries((prev) => [...prev, newEntry]);
-    }
-    toast.success("Measurement added to list!");
-    setEast("");
-    setWest("");
-    setNorth("");
-    setSouth("");
-    setUnitRate("");
-    setRoomsCount("1");
-  }
-
-  function handleRemoveEntry(id: string) {
-    setLocalEntries((prev) => prev.filter((e) => e.id !== id));
-  }
-
-  function handleClearAll() {
-    clearEntriesMutation.mutate(undefined, {
-      onSuccess: () => {
-        setLocalEntries([]);
-        toast.success("All entries cleared.");
-      },
-      onError: () => {
-        setLocalEntries([]);
-        toast.success("All entries cleared.");
-      },
-    });
-  }
-
-  const grandTotals = useMemo(() => {
-    if (displayEntries.length === 0) return null;
-    const totalValue = displayEntries.reduce((sum, e) => sum + e.totalValue, 0);
-    return { totalValue };
-  }, [displayEntries]);
 
   const regCalc = useMemo(() => {
     const propVal = Number.parseFloat(regPropertyValue) || 0;
@@ -536,7 +408,11 @@ export default function App() {
       {/* ═══════════════════════════════════════════════
           HERO SECTION
       ═══════════════════════════════════════════════ */}
-      <section id="hero" className="relative min-h-screen flex flex-col">
+      <section
+        id="hero"
+        className="relative flex flex-col"
+        style={{ minHeight: "20vh", maxHeight: "30vh" }}
+      >
         {/* Full-width banner background */}
         <div className="absolute inset-0 overflow-hidden">
           <img
@@ -1036,20 +912,6 @@ export default function App() {
                       data-ocid="calc.unit_rate.input"
                     />
                   </div>
-
-                  <Separator />
-
-                  {/* Add entry button */}
-                  <Button
-                    onClick={handleAddEntry}
-                    disabled={addEntryMutation.isPending}
-                    className="w-full text-white"
-                    style={{ backgroundColor: "#D4800A" }}
-                    data-ocid="calc.add_entry.primary_button"
-                  >
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Add to List / జాబితాకు జోడించు
-                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
@@ -1222,164 +1084,6 @@ export default function App() {
               </Card>
             </motion.div>
           </div>
-
-          {/* ── Entries List ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-10"
-          >
-            <Card className="shadow-card border-border bg-card">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 font-serif text-foreground">
-                    <ListOrdered
-                      className="w-5 h-5"
-                      style={{ color: "#D4800A" }}
-                    />
-                    Saved Measurements / సేవ్ చేసిన కొలతలు
-                  </CardTitle>
-                  {displayEntries.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleClearAll}
-                      disabled={clearEntriesMutation.isPending}
-                      className="text-muted-foreground hover:text-destructive text-xs gap-1.5"
-                      data-ocid="entries.delete_button"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      Clear All
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                {entriesLoading ? (
-                  <div
-                    className="text-center py-8"
-                    data-ocid="entries.loading_state"
-                  >
-                    <div
-                      className="animate-spin inline-block w-6 h-6 border-2 border-t-transparent rounded-full mb-2"
-                      style={{
-                        borderColor: "#D4800A",
-                        borderTopColor: "transparent",
-                      }}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Loading entries...
-                    </p>
-                  </div>
-                ) : displayEntries.length === 0 ? (
-                  <div
-                    className="text-center py-10"
-                    data-ocid="entries.empty_state"
-                  >
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
-                      style={{ backgroundColor: "rgba(212,128,10,0.1)" }}
-                    >
-                      <ListOrdered
-                        className="w-6 h-6"
-                        style={{ color: "#D4800A", opacity: 0.4 }}
-                      />
-                    </div>
-                    <p className="text-sm text-muted-foreground font-serif italic">
-                      No measurements saved yet
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      ఇంకా కొలతలు సేవ్ చేయబడలేదు
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {displayEntries.map((entry, idx) => (
-                      <motion.div
-                        key={entry.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-border bg-background hover:border-primary/30 transition-colors"
-                        data-ocid={`entries.item.${idx + 1}`}
-                      >
-                        <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
-                          <div>
-                            <p className="text-xs text-muted-foreground font-bold">
-                              Type
-                            </p>
-                            <p className="font-semibold text-foreground">
-                              {entry.propertyType}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground font-bold">
-                              Dimensions
-                            </p>
-                            <p className="font-semibold text-foreground">
-                              E:{entry.east} W:{entry.west} N:{entry.north} S:
-                              {entry.south}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground font-bold">
-                              Area
-                            </p>
-                            <p
-                              className="font-semibold"
-                              style={{ color: "#D4800A" }}
-                            >
-                              {formatArea(entry.totalArea)} {entry.unit}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground font-bold">
-                              Value
-                            </p>
-                            <p className="font-semibold text-foreground">
-                              {entry.totalValue > 0
-                                ? formatINR(entry.totalValue)
-                                : "—"}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveEntry(entry.id)}
-                          className="flex-shrink-0 p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                          data-ocid={`entries.delete_button.${idx + 1}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </motion.div>
-                    ))}
-
-                    {/* Grand total */}
-                    {grandTotals && grandTotals.totalValue > 0 && (
-                      <div
-                        className="flex items-center justify-between p-4 rounded-xl border-2"
-                        style={{
-                          backgroundColor: "rgba(212,128,10,0.08)",
-                          borderColor: "rgba(212,128,10,0.4)",
-                        }}
-                      >
-                        <p className="font-bold text-foreground">
-                          Grand Total / మొత్తం విలువ
-                        </p>
-                        <p
-                          className="font-mono font-bold text-xl"
-                          style={{ color: "#D4800A" }}
-                        >
-                          {formatINR(grandTotals.totalValue)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
         </div>
       </section>
 
