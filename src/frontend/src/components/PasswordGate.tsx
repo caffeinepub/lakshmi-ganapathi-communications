@@ -20,9 +20,7 @@ export function PasswordGate({ onSuccess }: PasswordGateProps) {
     if (password === CORRECT_PASSWORD) {
       onSuccess();
     } else {
-      setError(
-        "Incorrect password. Please try again. / తప్పు పాస్\u200cవర్డ్. దయచేసి మళ్ళీ ప్రయత్నించండి.",
-      );
+      setError("Incorrect password. Please try again.");
       setShake(true);
       setTimeout(() => setShake(false), 600);
       setPassword("");
@@ -66,13 +64,13 @@ export function PasswordGate({ onSuccess }: PasswordGateProps) {
           {/* Form */}
           <div className="px-6 py-8">
             <p className="text-center text-muted-foreground text-sm mb-6">
-              Enter password to access / పాస్‌వర్డ్ నమోదు చేయండి
+              Enter password to access
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 data-ocid="password.input"
                 type="password"
-                placeholder="Password / పాస్‌వర్డ్"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -96,7 +94,7 @@ export function PasswordGate({ onSuccess }: PasswordGateProps) {
                 type="submit"
                 className="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold text-base py-5"
               >
-                Enter / ప్రవేశించండి
+                Enter
               </Button>
             </form>
           </div>

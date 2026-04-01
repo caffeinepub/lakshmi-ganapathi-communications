@@ -494,13 +494,13 @@ export default function App() {
       <footer
         className="flex-shrink-0 flex items-center justify-between px-3 sm:px-5 border-t gap-2"
         style={{
-          height: "46px",
+          height: "62px",
           backgroundColor: "oklch(var(--card))",
           borderColor: "rgba(212,128,10,0.3)",
         }}
       >
         <p
-          className="text-xs font-bold truncate hidden sm:block"
+          className="text-sm font-bold truncate hidden sm:block"
           style={{ color: "#D4800A" }}
         >
           Prop: T.V. Nageswara Prasad | Ongole, AP
@@ -514,7 +514,7 @@ export default function App() {
               rel="noopener noreferrer"
               aria-label={sm.label}
               title={sm.label}
-              className="w-6 h-6 rounded-full flex items-center justify-center text-white hover:opacity-85 hover:scale-110 transition-all duration-200"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white hover:opacity-85 hover:scale-110 transition-all duration-200"
               style={{ background: sm.bg }}
             >
               <span className="sr-only">{sm.label}</span>
@@ -526,7 +526,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setShowMap(true)}
-            className="flex items-center gap-1 text-xs font-bold hover:underline"
+            className="flex items-center gap-1.5 text-sm font-bold hover:underline"
             style={{ color: "#D4800A" }}
             data-ocid="footer.location.button"
           >
@@ -632,7 +632,7 @@ function HomeTab() {
         style={{ height: "22vh", minHeight: "120px" }}
       >
         <img
-          src="/assets/uploads/d3911ffd02da7e389eb7e2bfd77965c8-019d2a3e-9149-703a-b7f3-dd338325d17f-1.jpg"
+          src="/assets/12-019d4853-33bd-7015-a2ab-a37d9c810f63.png"
           alt="Banner"
           className="w-full h-full object-cover object-center"
         />
