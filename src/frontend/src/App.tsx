@@ -268,7 +268,7 @@ export default function App() {
       {/* ══ HEADER ~25vh ══ */}
       <header
         className="flex flex-col border-b border-border"
-        style={{ height: "25vh", minHeight: 155, flexShrink: 0 }}
+        style={{ height: "45vh", minHeight: 200, flexShrink: 0 }}
       >
         {/* Branding row */}
         <div
@@ -319,7 +319,7 @@ export default function App() {
         {/* Banner image */}
         <div style={{ flex: "1 1 auto", overflow: "hidden", minHeight: 0 }}>
           <img
-            src="/assets/uploads/d3911ffd02da7e389eb7e2bfd77965c8-019d2a3e-9149-703a-b7f3-dd338325d17f-1.jpg"
+            src="/assets/12-019d4c94-db38-753e-b747-bc6488393d28.png"
             alt="Banner"
             className="w-full h-full object-cover object-center"
           />
@@ -766,8 +766,8 @@ export default function App() {
       <footer
         className="border-t border-border flex flex-col justify-between"
         style={{
-          height: "25vh",
-          minHeight: 140,
+          height: "20vh",
+          minHeight: 120,
           flexShrink: 0,
           padding: "8px 12px 4px",
         }}
