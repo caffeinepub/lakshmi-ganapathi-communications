@@ -265,11 +265,28 @@ export default function App() {
       className="flex flex-col bg-background text-foreground"
       style={{ height: "100vh", overflow: "hidden" }}
     >
-      {/* ══ HEADER ~25vh ══ */}
+      {/* ══ HEADER (auto height) ══ */}
       <header
         className="flex flex-col border-b border-border"
-        style={{ height: "45vh", minHeight: 200, flexShrink: 0 }}
+        style={{ height: "auto", flexShrink: 0 }}
       >
+        {/* Logo banner */}
+        <div
+          style={{ flexShrink: 0, overflow: "hidden", background: "#1A1A3E" }}
+        >
+          <img
+            src="/assets/generated/lgc-logo.dim_800x400.png"
+            alt="Lakshmi Ganapathi Communications Logo"
+            style={{
+              width: "100%",
+              maxHeight: 120,
+              objectFit: "cover",
+              objectPosition: "center",
+              display: "block",
+            }}
+          />
+        </div>
+
         {/* Branding row */}
         <div
           className="flex items-center gap-2 px-3 py-1"
@@ -300,14 +317,14 @@ export default function App() {
                 className="font-bold font-mono"
                 style={{ color: "#2E1A0C" }}
               >
-                +91 9848872469
+                Phone: +91 9848872469
               </span>
               <a
                 href="mailto:nageswaraprasadtv@gmail.com"
                 className="font-bold"
                 style={{ color: "#D4800A" }}
               >
-                nageswaraprasadtv@gmail.com
+                Email Id: nageswaraprasadtv@gmail.com
               </a>
               <span className="font-bold" style={{ color: "#D4800A" }}>
                 Prop: Tiruvaipati Venkata Nageswara Prasad
@@ -316,8 +333,14 @@ export default function App() {
           </div>
         </div>
 
-        {/* Banner image */}
-        <div style={{ flex: "1 1 auto", overflow: "hidden", minHeight: 0 }}>
+        {/* Banner image — 45vh */}
+        <div
+          style={{
+            height: "45vh",
+            flexShrink: 0,
+            overflow: "hidden",
+          }}
+        >
           <img
             src="/assets/12-019d4c94-db38-753e-b747-bc6488393d28.png"
             alt="Banner"
@@ -375,22 +398,41 @@ export default function App() {
           >
             Prohibited Property
           </a>
+          <a
+            href="https://meebhoomi.ap.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold rounded text-white no-underline"
+            style={{
+              background: "#D4800A",
+              padding: "3px 12px",
+              fontSize: "clamp(9px,1.1vw,13px)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Mee Bhoomi
+          </a>
         </div>
       </header>
 
-      {/* ══ MAIN CONTENT ~50vh ══ */}
+      {/* ══ MAIN CONTENT ══ */}
       <main
         className="flex flex-row"
         style={{ flex: "1 1 auto", overflow: "hidden", minHeight: 0 }}
       >
-        {/* LEFT: Calculator */}
+        {/* LEFT: Calculator — flex 1.5 for bigger size */}
         <section
           className="flex flex-col border-r border-border"
-          style={{ flex: 1, overflowY: "auto", padding: "5px 8px" }}
+          style={{
+            flex: "0 0 35%",
+            width: "35%",
+            overflowY: "auto",
+            padding: "5px 10px",
+          }}
         >
           <div
             className="font-bold text-center font-serif mb-1"
-            style={{ color: "#D4800A", fontSize: "clamp(10px,1.2vw,14px)" }}
+            style={{ color: "#D4800A", fontSize: "clamp(11px,1.4vw,16px)" }}
           >
             Calculator / లెక్కింపు
           </div>
@@ -405,8 +447,8 @@ export default function App() {
                 onClick={() => setPropType(pt)}
                 className="rounded-full font-bold"
                 style={{
-                  padding: "2px 9px",
-                  fontSize: "clamp(8px,0.95vw,11px)",
+                  padding: "2px 10px",
+                  fontSize: "clamp(9px,1.05vw,12px)",
                   background: propType === pt ? "#D4800A" : "#F6F0E2",
                   color: propType === pt ? "#fff" : "#2E1A0C",
                   border: "1px solid #D4800A",
@@ -426,7 +468,7 @@ export default function App() {
             <div className="flex items-center gap-1 mb-1">
               <span
                 className="font-bold"
-                style={{ fontSize: "clamp(8px,0.9vw,11px)", minWidth: 75 }}
+                style={{ fontSize: "clamp(9px,1vw,12px)", minWidth: 75 }}
               >
                 Rooms / గదులు
               </span>
@@ -439,9 +481,9 @@ export default function App() {
                 placeholder="Count"
                 className="border border-border rounded"
                 style={{
-                  width: 55,
-                  fontSize: "clamp(8px,0.9vw,11px)",
-                  padding: "2px 4px",
+                  width: 60,
+                  fontSize: "clamp(9px,1vw,12px)",
+                  padding: "2px 5px",
                 }}
               />
             </div>
@@ -457,8 +499,8 @@ export default function App() {
                 onClick={() => setUnit(u)}
                 className="rounded font-bold"
                 style={{
-                  padding: "1px 6px",
-                  fontSize: "clamp(7px,0.85vw,10px)",
+                  padding: "1px 7px",
+                  fontSize: "clamp(8px,0.95vw,11px)",
                   background: unit === u ? "#D4800A" : "#F6F0E2",
                   color: unit === u ? "#fff" : "#2E1A0C",
                   border: "1px solid #D4800A",
@@ -470,7 +512,7 @@ export default function App() {
           </div>
 
           {/* Directional inputs */}
-          <div className="grid grid-cols-2 gap-x-2 gap-y-1 mb-1">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-1">
             {[
               {
                 id: "east-input",
@@ -505,7 +547,7 @@ export default function App() {
                 <label
                   htmlFor={id}
                   className="font-bold"
-                  style={{ fontSize: "clamp(7px,0.85vw,10px)" }}
+                  style={{ fontSize: "clamp(8px,0.95vw,11px)" }}
                 >
                   {label}
                 </label>
@@ -518,8 +560,8 @@ export default function App() {
                   placeholder="0"
                   className="border border-border rounded"
                   style={{
-                    fontSize: "clamp(8px,0.9vw,11px)",
-                    padding: "2px 4px",
+                    fontSize: "clamp(9px,1vw,12px)",
+                    padding: "3px 5px",
                   }}
                 />
               </div>
@@ -531,7 +573,7 @@ export default function App() {
             <label
               htmlFor="rate-input"
               className="font-bold"
-              style={{ fontSize: "clamp(8px,0.9vw,11px)", minWidth: 75 }}
+              style={{ fontSize: "clamp(9px,1vw,12px)", minWidth: 80 }}
             >
               Rate (₹) / రేటు
             </label>
@@ -543,7 +585,7 @@ export default function App() {
               data-ocid="calc.rate.input"
               placeholder="per sq ft"
               className="border border-border rounded flex-1"
-              style={{ fontSize: "clamp(8px,0.9vw,11px)", padding: "2px 4px" }}
+              style={{ fontSize: "clamp(9px,1vw,12px)", padding: "3px 5px" }}
             />
           </div>
 
@@ -554,13 +596,13 @@ export default function App() {
               style={{
                 background: "#FBF6EA",
                 borderColor: "#D4800A",
-                fontSize: "clamp(7px,0.85vw,10px)",
+                fontSize: "clamp(8px,0.95vw,11px)",
               }}
               data-ocid="calc.results.panel"
             >
               <div
                 className="font-bold mb-0.5"
-                style={{ color: "#D4800A", fontSize: "clamp(8px,0.9vw,11px)" }}
+                style={{ color: "#D4800A", fontSize: "clamp(9px,1vw,12px)" }}
               >
                 Results / ఫలితాలు
               </div>
@@ -579,7 +621,7 @@ export default function App() {
                   className="font-bold mt-0.5"
                   style={{
                     color: "#D4800A",
-                    fontSize: "clamp(8px,0.9vw,11px)",
+                    fontSize: "clamp(9px,1vw,12px)",
                   }}
                 >
                   Estimated Value / అంచనా విలువ: ₹
@@ -593,7 +635,7 @@ export default function App() {
         {/* RIGHT: Registration Fees */}
         <section
           className="flex flex-col"
-          style={{ flex: 1, overflowY: "auto", padding: "5px 8px" }}
+          style={{ flex: "1 1 65%", overflowY: "auto", padding: "5px 8px" }}
         >
           <div
             className="font-bold text-center font-serif mb-1"
@@ -762,12 +804,12 @@ export default function App() {
         </section>
       </main>
 
-      {/* ══ FOOTER ~25vh ══ */}
+      {/* ══ FOOTER ══ */}
       <footer
         className="border-t border-border flex flex-col justify-between"
         style={{
           height: "20vh",
-          minHeight: 120,
+          minHeight: 100,
           flexShrink: 0,
           padding: "8px 12px 4px",
         }}
@@ -798,14 +840,14 @@ export default function App() {
                 className="font-bold"
                 style={{ color: "#2E1A0C" }}
               >
-                📞 +91 9848872469
+                📞 Phone: +91 9848872469
               </a>
               <a
                 href="mailto:nageswaraprasadtv@gmail.com"
                 className="font-bold"
                 style={{ color: "#D4800A" }}
               >
-                ✉ nageswaraprasadtv@gmail.com
+                ✉ Email Id: nageswaraprasadtv@gmail.com
               </a>
             </div>
           </div>
