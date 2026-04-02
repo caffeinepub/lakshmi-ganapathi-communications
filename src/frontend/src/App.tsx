@@ -546,7 +546,7 @@ export default function App() {
             ))}
           </div>
 
-          {/* Directional inputs with +/- step buttons */}
+          {/* Directional inputs with +/- step buttons — Order: East, South, West, North */}
           <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-1">
             <StepInput
               id="east-input"
@@ -554,6 +554,13 @@ export default function App() {
               value={east}
               onChange={setEast}
               ocid="calc.east.input"
+            />
+            <StepInput
+              id="south-input"
+              label="South / దక్షిణ"
+              value={south}
+              onChange={setSouth}
+              ocid="calc.south.input"
             />
             <StepInput
               id="west-input"
@@ -568,13 +575,6 @@ export default function App() {
               value={north}
               onChange={setNorth}
               ocid="calc.north.input"
-            />
-            <StepInput
-              id="south-input"
-              label="South / దక్షిణ"
-              value={south}
-              onChange={setSouth}
-              ocid="calc.south.input"
             />
           </div>
 
