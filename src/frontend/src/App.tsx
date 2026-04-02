@@ -270,27 +270,10 @@ export default function App() {
         className="flex flex-col border-b border-border"
         style={{ height: "auto", flexShrink: 0 }}
       >
-        {/* Logo banner */}
-        <div
-          style={{ flexShrink: 0, overflow: "hidden", background: "#1A1A3E" }}
-        >
-          <img
-            src="/assets/generated/lgc-logo.dim_800x400.png"
-            alt="Lakshmi Ganapathi Communications Logo"
-            style={{
-              width: "100%",
-              maxHeight: 120,
-              objectFit: "cover",
-              objectPosition: "center",
-              display: "block",
-            }}
-          />
-        </div>
-
         {/* Branding row */}
         <div
-          className="flex items-center gap-2 px-3 py-1"
-          style={{ flex: "0 0 auto" }}
+          className="flex items-center gap-2 px-3 py-2"
+          style={{ flex: "0 0 auto", background: "#1A1A3E" }}
         >
           <img
             src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
@@ -303,8 +286,9 @@ export default function App() {
               className="font-serif font-bold leading-tight"
               style={{
                 color: "#D4800A",
-                fontSize: "clamp(12px,2vw,20px)",
+                fontSize: "clamp(16px,3vw,32px)",
                 lineHeight: 1.2,
+                letterSpacing: "0.02em",
               }}
             >
               Lakshmi Ganapathi Communications
@@ -315,7 +299,7 @@ export default function App() {
             >
               <span
                 className="font-bold font-mono"
-                style={{ color: "#2E1A0C" }}
+                style={{ color: "#ffffff" }}
               >
                 Phone: +91 9848872469
               </span>
@@ -348,7 +332,7 @@ export default function App() {
           />
         </div>
 
-        {/* 3 external link buttons */}
+        {/* 4 external link buttons */}
         <div
           className="flex gap-2 px-3 py-1 justify-center flex-wrap"
           style={{ flex: "0 0 auto" }}
@@ -357,7 +341,6 @@ export default function App() {
             href="https://registration.ec.ap.gov.in/ecSearch"
             target="_blank"
             rel="noopener noreferrer"
-            data-ocid="header.ec_search.button"
             className="font-bold rounded text-white no-underline"
             style={{
               background: "#D4800A",
@@ -372,7 +355,6 @@ export default function App() {
             href="https://registration.ap.gov.in/igrs/newPropertyvalue"
             target="_blank"
             rel="noopener noreferrer"
-            data-ocid="header.market_value.button"
             className="font-bold rounded text-white no-underline"
             style={{
               background: "#D4800A",
@@ -387,7 +369,6 @@ export default function App() {
             href="https://registration.ap.gov.in/igrs/ppProperty"
             target="_blank"
             rel="noopener noreferrer"
-            data-ocid="header.prohibited.button"
             className="font-bold rounded text-white no-underline"
             style={{
               background: "#D4800A",
@@ -420,12 +401,12 @@ export default function App() {
         className="flex flex-row"
         style={{ flex: "1 1 auto", overflow: "hidden", minHeight: 0 }}
       >
-        {/* LEFT: Calculator — flex 1.5 for bigger size */}
+        {/* LEFT: Calculator — 60% width */}
         <section
           className="flex flex-col border-r border-border"
           style={{
-            flex: "0 0 35%",
-            width: "35%",
+            flex: "0 0 60%",
+            width: "60%",
             overflowY: "auto",
             padding: "5px 10px",
           }}
@@ -632,10 +613,10 @@ export default function App() {
           )}
         </section>
 
-        {/* RIGHT: Registration Fees */}
+        {/* RIGHT: Registration Fees — 40% width */}
         <section
           className="flex flex-col"
-          style={{ flex: "1 1 65%", overflowY: "auto", padding: "5px 8px" }}
+          style={{ flex: "1 1 40%", overflowY: "auto", padding: "5px 8px" }}
         >
           <div
             className="font-bold text-center font-serif mb-1"
