@@ -181,6 +181,91 @@ function fmt(n: number): string {
   return n.toFixed(4);
 }
 
+// ─── Step input component ─────────────────────────────────────────────────────
+function StepInput({
+  id,
+  label,
+  value,
+  onChange,
+  ocid,
+  step = 1,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  ocid: string;
+  step?: number;
+}) {
+  function adjust(delta: number) {
+    const current = Number.parseFloat(value) || 0;
+    const next = Math.max(0, current + delta);
+    onChange(next % 1 === 0 ? next.toString() : next.toFixed(2));
+  }
+  return (
+    <div className="flex flex-col">
+      <label
+        htmlFor={id}
+        className="font-bold"
+        style={{ fontSize: "clamp(8px,0.95vw,11px)" }}
+      >
+        {label}
+      </label>
+      <div className="flex items-center gap-0.5">
+        <button
+          type="button"
+          onClick={() => adjust(-step)}
+          className="font-bold rounded flex items-center justify-center select-none"
+          style={{
+            background: "#D4800A",
+            color: "#fff",
+            width: 22,
+            height: 26,
+            fontSize: 15,
+            flexShrink: 0,
+            lineHeight: 1,
+          }}
+          aria-label={`Decrease ${label}`}
+        >
+          −
+        </button>
+        <input
+          id={id}
+          type="number"
+          value={value}
+          onChange={(ev) => onChange(ev.target.value)}
+          data-ocid={ocid}
+          placeholder="0"
+          className="border border-border rounded text-center"
+          style={{
+            fontSize: "clamp(9px,1vw,12px)",
+            padding: "3px 2px",
+            flex: 1,
+            minWidth: 0,
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => adjust(step)}
+          className="font-bold rounded flex items-center justify-center select-none"
+          style={{
+            background: "#D4800A",
+            color: "#fff",
+            width: 22,
+            height: 26,
+            fontSize: 15,
+            flexShrink: 0,
+            lineHeight: 1,
+          }}
+          aria-label={`Increase ${label}`}
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Deed type definitions ────────────────────────────────────────────────────
 type DeedType =
   | "sale"
@@ -265,7 +350,7 @@ export default function App() {
       className="flex flex-col bg-background text-foreground"
       style={{ height: "100vh", overflow: "hidden" }}
     >
-      {/* ══ HEADER (auto height) ══ */}
+      {/* ══ HEADER ══ */}
       <header
         className="flex flex-col border-b border-border"
         style={{ height: "auto", flexShrink: 0 }}
@@ -317,14 +402,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Banner image — 45vh */}
-        <div
-          style={{
-            height: "45vh",
-            flexShrink: 0,
-            overflow: "hidden",
-          }}
-        >
+        {/* Banner image — 25vh */}
+        <div style={{ height: "25vh", flexShrink: 0, overflow: "hidden" }}>
           <img
             src="/assets/12-019d4c94-db38-753e-b747-bc6488393d28.png"
             alt="Banner"
@@ -337,62 +416,37 @@ export default function App() {
           className="flex gap-2 px-3 py-1 justify-center flex-wrap"
           style={{ flex: "0 0 auto" }}
         >
-          <a
-            href="https://registration.ec.ap.gov.in/ecSearch"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold rounded text-white no-underline"
-            style={{
-              background: "#D4800A",
-              padding: "3px 12px",
-              fontSize: "clamp(9px,1.1vw,13px)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            E.C Search
-          </a>
-          <a
-            href="https://registration.ap.gov.in/igrs/newPropertyvalue"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold rounded text-white no-underline"
-            style={{
-              background: "#D4800A",
-              padding: "3px 12px",
-              fontSize: "clamp(9px,1.1vw,13px)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Market Value
-          </a>
-          <a
-            href="https://registration.ap.gov.in/igrs/ppProperty"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold rounded text-white no-underline"
-            style={{
-              background: "#D4800A",
-              padding: "3px 12px",
-              fontSize: "clamp(9px,1.1vw,13px)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Prohibited Property
-          </a>
-          <a
-            href="https://meebhoomi.ap.gov.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold rounded text-white no-underline"
-            style={{
-              background: "#D4800A",
-              padding: "3px 12px",
-              fontSize: "clamp(9px,1.1vw,13px)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Mee Bhoomi
-          </a>
+          {[
+            {
+              href: "https://registration.ec.ap.gov.in/ecSearch",
+              label: "E.C Search",
+            },
+            {
+              href: "https://registration.ap.gov.in/igrs/newPropertyvalue",
+              label: "Market Value",
+            },
+            {
+              href: "https://registration.ap.gov.in/igrs/ppProperty",
+              label: "Prohibited Property",
+            },
+            { href: "https://meebhoomi.ap.gov.in/", label: "Mee Bhoomi" },
+          ].map(({ href, label }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold rounded text-white no-underline"
+              style={{
+                background: "#D4800A",
+                padding: "3px 12px",
+                fontSize: "clamp(9px,1.1vw,13px)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {label}
+            </a>
+          ))}
         </div>
       </header>
 
@@ -492,61 +546,36 @@ export default function App() {
             ))}
           </div>
 
-          {/* Directional inputs */}
+          {/* Directional inputs with +/- step buttons */}
           <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-1">
-            {[
-              {
-                id: "east-input",
-                label: "East / తూర్పు",
-                val: east,
-                set: setEast,
-                ocid: "calc.east.input",
-              },
-              {
-                id: "west-input",
-                label: "West / పడమర",
-                val: west,
-                set: setWest,
-                ocid: "calc.west.input",
-              },
-              {
-                id: "north-input",
-                label: "North / ఉత్తర",
-                val: north,
-                set: setNorth,
-                ocid: "calc.north.input",
-              },
-              {
-                id: "south-input",
-                label: "South / దక్షిణ",
-                val: south,
-                set: setSouth,
-                ocid: "calc.south.input",
-              },
-            ].map(({ id, label, val, set, ocid }) => (
-              <div key={ocid} className="flex flex-col">
-                <label
-                  htmlFor={id}
-                  className="font-bold"
-                  style={{ fontSize: "clamp(8px,0.95vw,11px)" }}
-                >
-                  {label}
-                </label>
-                <input
-                  id={id}
-                  type="number"
-                  value={val}
-                  onChange={(ev) => set(ev.target.value)}
-                  data-ocid={ocid}
-                  placeholder="0"
-                  className="border border-border rounded"
-                  style={{
-                    fontSize: "clamp(9px,1vw,12px)",
-                    padding: "3px 5px",
-                  }}
-                />
-              </div>
-            ))}
+            <StepInput
+              id="east-input"
+              label="East / తూర్పు"
+              value={east}
+              onChange={setEast}
+              ocid="calc.east.input"
+            />
+            <StepInput
+              id="west-input"
+              label="West / పడమర"
+              value={west}
+              onChange={setWest}
+              ocid="calc.west.input"
+            />
+            <StepInput
+              id="north-input"
+              label="North / ఉత్తర"
+              value={north}
+              onChange={setNorth}
+              ocid="calc.north.input"
+            />
+            <StepInput
+              id="south-input"
+              label="South / దక్షిణ"
+              value={south}
+              onChange={setSouth}
+              ocid="calc.south.input"
+            />
           </div>
 
           {/* Rate input */}
@@ -600,10 +629,7 @@ export default function App() {
               {rateVal > 0 && (
                 <div
                   className="font-bold mt-0.5"
-                  style={{
-                    color: "#D4800A",
-                    fontSize: "clamp(9px,1vw,12px)",
-                  }}
+                  style={{ color: "#D4800A", fontSize: "clamp(9px,1vw,12px)" }}
                 >
                   Estimated Value / అంచనా విలువ: ₹
                   {Math.round(totalValue).toLocaleString("en-IN")}
@@ -939,7 +965,6 @@ export default function App() {
               boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
             }}
           >
-            {/* Modal header */}
             <div
               className="flex items-center justify-between px-4 py-2 font-bold"
               style={{ background: "#D4800A", color: "#fff", fontSize: 14 }}
@@ -955,8 +980,6 @@ export default function App() {
                 ✕
               </button>
             </div>
-
-            {/* Map embed */}
             <div style={{ flex: 1, minHeight: 0 }}>
               <iframe
                 title="Business Location"
@@ -968,8 +991,6 @@ export default function App() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-
-            {/* Modal footer */}
             <div className="flex gap-2 px-4 py-3 justify-center">
               <a
                 href="https://www.google.com/maps/dir/?api=1&destination=Pullareddy+Complex+Registration+Office+Ongole+AP+523002"
