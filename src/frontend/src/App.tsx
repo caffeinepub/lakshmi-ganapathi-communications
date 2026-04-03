@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MapModal } from "./components/MapModal";
 import { PasswordGate } from "./components/PasswordGate";
 
 // ─── SVG Social Icons ────────────────────────────────────────────────────────
@@ -10,8 +11,8 @@ function WhatsAppIcon() {
       viewBox="0 0 24 24"
       fill="#25D366"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
+      width="18"
+      height="18"
     >
       <title>WhatsApp</title>
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
@@ -27,8 +28,8 @@ function TelegramIcon() {
       viewBox="0 0 24 24"
       fill="#0088cc"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
+      width="18"
+      height="18"
     >
       <title>Telegram</title>
       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.667l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.892z" />
@@ -43,8 +44,8 @@ function FacebookIcon() {
       viewBox="0 0 24 24"
       fill="#1877F2"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
+      width="18"
+      height="18"
     >
       <title>Facebook</title>
       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -58,8 +59,8 @@ function InstagramIcon() {
       aria-label="Instagram"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
+      width="18"
+      height="18"
     >
       <title>Instagram</title>
       <defs>
@@ -86,8 +87,8 @@ function TwitterXIcon() {
       viewBox="0 0 24 24"
       fill="#000000"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
+      width="18"
+      height="18"
     >
       <title>Twitter X</title>
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -815,33 +816,33 @@ export default function App() {
       <footer
         className="border-t border-border flex flex-col justify-between"
         style={{
-          height: "20vh",
-          minHeight: 100,
+          height: "12vh",
+          minHeight: 60,
           flexShrink: 0,
-          padding: "8px 12px 4px",
+          padding: "4px 8px 2px",
         }}
       >
-        <div className="flex flex-col md:flex-row gap-2 flex-1 min-h-0">
+        <div className="flex flex-col md:flex-row gap-1 flex-1 min-h-0">
           {/* Contact info */}
           <div
-            className="flex flex-col justify-center gap-0.5"
-            style={{ flex: 1, fontSize: "clamp(8px,0.95vw,12px)" }}
+            className="flex flex-col justify-center gap-0"
+            style={{ flex: 1, fontSize: "clamp(7px,0.82vw,10px)" }}
           >
             <div
               className="font-bold"
-              style={{ color: "#D4800A", fontSize: "clamp(9px,1vw,13px)" }}
+              style={{ color: "#D4800A", fontSize: "clamp(7px,0.85vw,10px)" }}
             >
               Prop: Tiruvaipati Venkata Nageswara Prasad
             </div>
             <div
               className="font-bold"
-              style={{ color: "#2E1A0C", lineHeight: 1.3 }}
+              style={{ color: "#2E1A0C", lineHeight: 1.2 }}
             >
               Shop No-22, Pullareddy Complex, Beside Registration Office, Near
               Ravi Priya Mall, Ongole, Prakasam Dist, Andhra Pradesh, Pin -
               523002
             </div>
-            <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+            <div className="flex flex-wrap gap-x-2 gap-y-0">
               <a
                 href="tel:+919848872469"
                 className="font-bold"
@@ -861,10 +862,10 @@ export default function App() {
 
           {/* Social + location */}
           <div
-            className="flex flex-col justify-center items-center gap-1.5"
+            className="flex flex-col justify-center items-center gap-1"
             style={{ flexShrink: 0 }}
           >
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-1.5 items-center">
               {[
                 {
                   href: "https://wa.me/919848872469",
@@ -899,7 +900,7 @@ export default function App() {
                   rel="noopener noreferrer"
                   data-ocid={ocid}
                   className="rounded-full bg-white border border-border flex items-center justify-center"
-                  style={{ width: 34, height: 34, padding: 4 }}
+                  style={{ width: 26, height: 26, padding: 2 }}
                 >
                   {icon}
                 </a>
@@ -912,8 +913,8 @@ export default function App() {
               className="font-bold rounded text-white"
               style={{
                 background: "#D4800A",
-                padding: "4px 14px",
-                fontSize: "clamp(9px,1vw,12px)",
+                padding: "2px 10px",
+                fontSize: "clamp(7px,0.82vw,10px)",
               }}
             >
               📍 View Location / స్థానం చూడండి
@@ -925,9 +926,9 @@ export default function App() {
         <div
           className="text-center"
           style={{
-            fontSize: "clamp(7px,0.75vw,9px)",
+            fontSize: "clamp(6px,0.65vw,8px)",
             color: "#7A5A2A",
-            marginTop: 2,
+            marginTop: 1,
           }}
         >
           © {new Date().getFullYear()} Lakshmi Ganapathi Communications · Built
@@ -944,86 +945,7 @@ export default function App() {
       </footer>
 
       {/* ══ MAP MODAL ══ */}
-      {mapOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ background: "rgba(0,0,0,0.6)" }}
-          onClick={(ev) => {
-            if (ev.target === ev.currentTarget) setMapOpen(false);
-          }}
-          onKeyDown={(ev) => {
-            if (ev.key === "Escape") setMapOpen(false);
-          }}
-          data-ocid="footer.map.modal"
-        >
-          <div
-            className="rounded-lg overflow-hidden flex flex-col"
-            style={{
-              width: "min(90vw, 640px)",
-              maxHeight: "80vh",
-              background: "#FBF6EA",
-              boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
-            }}
-          >
-            <div
-              className="flex items-center justify-between px-4 py-2 font-bold"
-              style={{ background: "#D4800A", color: "#fff", fontSize: 14 }}
-            >
-              <span>📍 Lakshmi Ganapathi Communications</span>
-              <button
-                type="button"
-                onClick={() => setMapOpen(false)}
-                data-ocid="footer.map.close_button"
-                className="rounded-full w-7 h-7 flex items-center justify-center font-bold"
-                style={{ background: "rgba(255,255,255,0.25)", fontSize: 16 }}
-              >
-                ✕
-              </button>
-            </div>
-            <div style={{ flex: 1, minHeight: 0 }}>
-              <iframe
-                title="Business Location"
-                src="https://maps.google.com/maps?q=Pullareddy+Complex+Registration+Office+Ravi+Priya+Mall+Ongole+Prakasam+Andhra+Pradesh+523002&output=embed"
-                width="100%"
-                height="300"
-                style={{ border: 0, display: "block" }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-            <div className="flex gap-2 px-4 py-3 justify-center">
-              <a
-                href="https://www.google.com/maps/dir/?api=1&destination=Pullareddy+Complex+Registration+Office+Ongole+AP+523002"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-ocid="footer.map.directions.button"
-                className="font-bold rounded text-white no-underline"
-                style={{
-                  background: "#D4800A",
-                  padding: "6px 16px",
-                  fontSize: 13,
-                }}
-              >
-                🗺️ Get Directions / దిశలు పొందండి
-              </a>
-              <button
-                type="button"
-                onClick={() => setMapOpen(false)}
-                data-ocid="footer.map.cancel_button"
-                className="font-bold rounded"
-                style={{
-                  background: "#F6F0E2",
-                  padding: "6px 16px",
-                  fontSize: 13,
-                  border: "1px solid #D4800A",
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {mapOpen && <MapModal onClose={() => setMapOpen(false)} />}
     </div>
   );
 }
