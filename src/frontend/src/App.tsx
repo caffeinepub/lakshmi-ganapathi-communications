@@ -204,15 +204,15 @@ function StepInput({
     onChange(next % 1 === 0 ? next.toString() : next.toFixed(2));
   }
   return (
-    <div className="flex flex-col">
+    <div className="flex items-center gap-1">
       <label
         htmlFor={id}
-        className="font-bold"
-        style={{ fontSize: "clamp(8px,0.95vw,11px)" }}
+        className="font-bold flex-shrink-0"
+        style={{ fontSize: "clamp(8px,0.95vw,11px)", minWidth: 90 }}
       >
         {label}
       </label>
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-0.5 flex-1">
         <button
           type="button"
           onClick={() => adjust(-step)}
@@ -547,8 +547,8 @@ export default function App() {
             ))}
           </div>
 
-          {/* Directional inputs with +/- step buttons — Order: East, South, West, North */}
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-1">
+          {/* Directional inputs — single column: East, South, West, North */}
+          <div className="flex flex-col gap-1 mb-1">
             <StepInput
               id="east-input"
               label="East / తూర్పు"
