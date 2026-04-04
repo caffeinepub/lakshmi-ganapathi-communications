@@ -183,92 +183,6 @@ function fmt(n: number): string {
   return n.toFixed(4);
 }
 
-function StepInput({
-  id,
-  label,
-  value,
-  onChange,
-  ocid,
-  step = 1,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  ocid: string;
-  step?: number;
-}) {
-  function adjust(delta: number) {
-    const current = Number.parseFloat(value) || 0;
-    const next = Math.max(0, current + delta);
-    onChange(next % 1 === 0 ? next.toString() : next.toFixed(2));
-  }
-  return (
-    <div className="flex items-center gap-1">
-      <label
-        htmlFor={id}
-        className="font-bold flex-shrink-0"
-        style={{
-          fontSize: "clamp(11px,1.4vw,16px)",
-          minWidth: 100,
-          color: "#2E1A0C",
-        }}
-      >
-        {label}
-      </label>
-      <div className="flex items-center gap-0.5 flex-1">
-        <button
-          type="button"
-          onClick={() => adjust(-step)}
-          className="font-bold rounded flex items-center justify-center select-none"
-          style={{
-            background: "#D4800A",
-            color: "#fff",
-            width: 22,
-            height: 24,
-            fontSize: 14,
-            flexShrink: 0,
-          }}
-          aria-label={`Decrease ${label}`}
-        >
-          −
-        </button>
-        <input
-          id={id}
-          type="number"
-          value={value}
-          onChange={(ev) => onChange(ev.target.value)}
-          data-ocid={ocid}
-          placeholder="0"
-          className="border border-border rounded text-center"
-          style={{
-            fontSize: "clamp(9px,1vw,12px)",
-            padding: "2px 2px",
-            flex: 1,
-            minWidth: 0,
-          }}
-        />
-        <button
-          type="button"
-          onClick={() => adjust(step)}
-          className="font-bold rounded flex items-center justify-center select-none"
-          style={{
-            background: "#D4800A",
-            color: "#fff",
-            width: 22,
-            height: 24,
-            fontSize: 14,
-            flexShrink: 0,
-          }}
-          aria-label={`Increase ${label}`}
-        >
-          +
-        </button>
-      </div>
-    </div>
-  );
-}
-
 type DeedType =
   | "sale"
   | "gift"
@@ -306,7 +220,8 @@ export default function App() {
   const [west, setWest] = useState("");
   const [north, setNorth] = useState("");
   const [south, setSouth] = useState("");
-  const [unit, setUnit] = useState<Unit>("sqft");
+  // Unit is fixed to sqft — selector removed from Calculator box per user request
+  const unit: Unit = "sqft";
   const [rate, setRate] = useState("");
   const [deedType, setDeedType] = useState<DeedType>("sale");
   const [propValue, setPropValue] = useState("");
@@ -337,18 +252,35 @@ export default function App() {
 
   if (!unlocked) return <PasswordGate onSuccess={() => setUnlocked(true)} />;
 
-  // Shared section header style
   const sectionHeadStyle: React.CSSProperties = {
     background: "linear-gradient(90deg, #D4800A 0%, #b86a00 100%)",
     color: "#FFD700",
     fontWeight: 900,
-    fontSize: "clamp(10px,1.3vw,15px)",
+    fontSize: "clamp(13px,1.6vw,18px)",
     textAlign: "center",
     padding: "5px 4px",
     letterSpacing: "0.04em",
     textShadow: "0 1px 4px rgba(0,0,0,0.5)",
     flexShrink: 0,
     fontFamily: "serif",
+  };
+
+  const dirLabelStyle: React.CSSProperties = {
+    fontSize: "clamp(15px,1.9vw,23px)",
+    minWidth: 100,
+    color: "#2E1A0C",
+    fontWeight: 900,
+    flexShrink: 0,
+  };
+
+  const dirInputStyle: React.CSSProperties = {
+    fontSize: "clamp(16px,2vw,26px)",
+    padding: "6px 8px",
+    fontWeight: 900,
+    minHeight: 36,
+    textAlign: "center",
+    flex: 1,
+    minWidth: 0,
   };
 
   return (
@@ -385,7 +317,6 @@ export default function App() {
               boxShadow: "4px 0 18px rgba(212,128,10,0.35)",
             }}
           >
-            {/* Logo + name row */}
             <div
               style={{
                 display: "flex",
@@ -412,20 +343,18 @@ export default function App() {
                 className="font-serif font-bold"
                 style={{
                   color: "#FFD700",
-                  fontSize: "clamp(18px,3vw,38px)",
+                  fontSize: "clamp(14px,2.2vw,30px)",
                   lineHeight: 1.15,
                   margin: 0,
+                  whiteSpace: "nowrap",
                   textShadow:
                     "0 0 12px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.9)",
                   filter: "drop-shadow(0 0 6px #D4800A)",
                 }}
               >
-                Lakshmi Ganapathi
-                <br />
-                Communications
+                Lakshmi Ganapathi Communications
               </h1>
             </div>
-            {/* Phone */}
             <div
               style={{
                 background: "rgba(212,128,10,0.25)",
@@ -454,7 +383,6 @@ export default function App() {
                 Phone: +91 9848872469
               </span>
             </div>
-            {/* Email */}
             <div
               style={{
                 background: "rgba(212,128,10,0.18)",
@@ -485,7 +413,6 @@ export default function App() {
                 Email Id: nageswaraprasadtv@gmail.com
               </a>
             </div>
-            {/* Prop name */}
             <div
               style={{
                 background: "rgba(255,215,0,0.12)",
@@ -559,7 +486,7 @@ export default function App() {
           className="flex flex-col border-r border-border"
           style={{ flex: "1 1 33.33%", overflow: "hidden" }}
         >
-          <div style={sectionHeadStyle}>Calculator / లెక్కింపు</div>
+          <div style={sectionHeadStyle}>Calculator</div>
           <div
             className="flex flex-col overflow-y-auto"
             style={{ flex: 1, padding: "4px 8px 6px", gap: 5 }}
@@ -577,8 +504,9 @@ export default function App() {
                   onClick={() => setPropType(pt)}
                   className="rounded-full font-bold"
                   style={{
-                    padding: "4px 14px",
-                    fontSize: "clamp(11px,1.4vw,16px)",
+                    padding: "6px 16px",
+                    fontSize: "clamp(13px,1.7vw,20px)",
+                    fontWeight: 900,
                     letterSpacing: "0.04em",
                     textTransform: propType === pt ? "uppercase" : "none",
                     background: propType === pt ? "#D4800A" : "#F6F0E2",
@@ -602,7 +530,7 @@ export default function App() {
               >
                 <span
                   className="font-bold"
-                  style={{ fontSize: "clamp(8px,0.9vw,11px)", minWidth: 70 }}
+                  style={{ fontSize: "clamp(13px,1.5vw,18px)", minWidth: 70 }}
                 >
                   Rooms / గదులు
                 </span>
@@ -615,82 +543,78 @@ export default function App() {
                   placeholder="Count"
                   className="border border-border rounded"
                   style={{
-                    width: 55,
-                    fontSize: "clamp(9px,1vw,12px)",
+                    width: 70,
+                    fontSize: "clamp(13px,1.5vw,18px)",
                     padding: "2px 4px",
                   }}
                 />
               </div>
             )}
 
-            {/* Unit selector */}
-            <div
-              className="flex flex-wrap gap-1 justify-center"
-              style={{ flexShrink: 0 }}
-            >
-              {UNITS.map((u) => (
-                <button
-                  key={u}
-                  type="button"
-                  data-ocid={`calc.unit.${u}.toggle`}
-                  onClick={() => setUnit(u)}
-                  className="rounded font-bold"
-                  style={{
-                    padding: "3px 8px",
-                    fontSize: "clamp(10px,1.2vw,14px)",
-                    fontWeight: 900,
-                    letterSpacing: "0.03em",
-                    background: unit === u ? "#D4800A" : "#F6F0E2",
-                    color: unit === u ? "#fff" : "#2E1A0C",
-                    border: "1px solid #D4800A",
-                  }}
-                >
-                  {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}
-                </button>
-              ))}
-            </div>
-
-            {/* Directional inputs */}
+            {/* Directional inputs — plain number inputs, no +/- buttons */}
             <div className="flex flex-col gap-1" style={{ flexShrink: 0 }}>
-              <StepInput
-                id="east-input"
-                label="East / తూర్పు"
-                value={east}
-                onChange={setEast}
-                ocid="calc.east.input"
-              />
-              <StepInput
-                id="south-input"
-                label="South / దక్షిణ"
-                value={south}
-                onChange={setSouth}
-                ocid="calc.south.input"
-              />
-              <StepInput
-                id="west-input"
-                label="West / పడమర"
-                value={west}
-                onChange={setWest}
-                ocid="calc.west.input"
-              />
-              <StepInput
-                id="north-input"
-                label="North / ఉత్తర"
-                value={north}
-                onChange={setNorth}
-                ocid="calc.north.input"
-              />
+              {[
+                {
+                  id: "east-input",
+                  label: "East / తూర్పు",
+                  value: east,
+                  onChange: setEast,
+                  ocid: "calc.east.input",
+                },
+                {
+                  id: "south-input",
+                  label: "South / దక్షిణ",
+                  value: south,
+                  onChange: setSouth,
+                  ocid: "calc.south.input",
+                },
+                {
+                  id: "west-input",
+                  label: "West / పడమర",
+                  value: west,
+                  onChange: setWest,
+                  ocid: "calc.west.input",
+                },
+                {
+                  id: "north-input",
+                  label: "North / ఉత్తర",
+                  value: north,
+                  onChange: setNorth,
+                  ocid: "calc.north.input",
+                },
+              ].map(({ id, label, value, onChange, ocid }) => (
+                <div key={id} className="flex items-center gap-1">
+                  <label
+                    htmlFor={id}
+                    className="font-bold"
+                    style={dirLabelStyle}
+                  >
+                    {label}
+                  </label>
+                  <input
+                    id={id}
+                    type="number"
+                    value={value}
+                    onChange={(ev) => onChange(ev.target.value)}
+                    data-ocid={ocid}
+                    placeholder="0"
+                    className="border border-border rounded text-center"
+                    style={dirInputStyle}
+                  />
+                </div>
+              ))}
             </div>
 
             {/* Rate input */}
             <div className="flex items-center gap-1" style={{ flexShrink: 0 }}>
               <label
                 htmlFor="rate-input"
-                className="font-bold"
+                className="font-bold flex-shrink-0"
                 style={{
-                  fontSize: "clamp(11px,1.4vw,16px)",
+                  fontSize: "clamp(15px,1.9vw,23px)",
                   minWidth: 100,
                   color: "#2E1A0C",
+                  fontWeight: 900,
                 }}
               >
                 Rate (₹) / రేటు
@@ -704,8 +628,10 @@ export default function App() {
                 placeholder="per sq ft"
                 className="border border-border rounded flex-1"
                 style={{
-                  fontSize: "clamp(8px,0.9vw,11px)",
-                  padding: "2px 4px",
+                  fontSize: "clamp(16px,2vw,26px)",
+                  padding: "6px 8px",
+                  fontWeight: 900,
+                  minHeight: 36,
                 }}
               />
             </div>
@@ -717,80 +643,78 @@ export default function App() {
           className="flex flex-col border-r border-border"
           style={{ flex: "1 1 33.33%", overflow: "hidden" }}
         >
-          <div style={sectionHeadStyle}>Results / ఫలితాలు</div>
+          <div style={sectionHeadStyle}>Results</div>
           <div
             className="flex flex-col overflow-y-auto"
             style={{ flex: 1, padding: "6px 8px" }}
           >
             {areaSqFt > 0 ? (
-              <>
+              <div
+                className="rounded border p-2 mb-2"
+                style={{
+                  background: "#FBF6EA",
+                  borderColor: "#D4800A",
+                  fontSize: "clamp(11px,1.3vw,15px)",
+                }}
+                data-ocid="calc.results.panel"
+              >
                 <div
-                  className="rounded border p-2 mb-2"
+                  className="font-bold mb-1"
                   style={{
-                    background: "#FBF6EA",
-                    borderColor: "#D4800A",
-                    fontSize: "clamp(11px,1.3vw,15px)",
+                    color: "#D4800A",
+                    fontSize: "clamp(13px,1.5vw,17px)",
+                    textAlign: "center",
                   }}
-                  data-ocid="calc.results.panel"
                 >
-                  <div
-                    className="font-bold mb-1"
-                    style={{
-                      color: "#D4800A",
-                      fontSize: "clamp(13px,1.5vw,17px)",
-                      textAlign: "center",
-                    }}
-                  >
-                    Area Conversions / విస్తీర్ణం
-                  </div>
-                  <div className="grid grid-cols-1 gap-y-0.5">
-                    {UNITS.map((u) => (
-                      <div
-                        key={u}
-                        className="flex justify-between gap-1"
-                        style={{
-                          borderBottom: "1px dotted #D4800A",
-                          paddingBottom: 2,
-                        }}
-                      >
-                        <span
-                          className="font-bold"
-                          style={{
-                            color: "#7A3A00",
-                            fontSize: "clamp(11px,1.3vw,15px)",
-                          }}
-                        >
-                          {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}:
-                        </span>
-                        <span
-                          className="font-bold"
-                          style={{
-                            color: "#1A1A1A",
-                            fontSize: "clamp(11px,1.3vw,15px)",
-                          }}
-                        >
-                          {fmt(fromSqFt(areaSqFt, u))}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  {rateVal > 0 && (
+                  Area Conversions / విస్తీర్ణం
+                </div>
+                <div className="grid grid-cols-1 gap-y-0.5">
+                  {UNITS.map((u) => (
                     <div
-                      className="font-bold mt-2 text-center rounded p-1"
+                      key={u}
+                      className="flex justify-between gap-1"
                       style={{
-                        color: "#fff",
-                        fontSize: "clamp(10px,1.3vw,15px)",
-                        background: "linear-gradient(90deg, #D4800A, #b86a00)",
-                        textShadow: "0 1px 4px rgba(0,0,0,0.6)",
-                        letterSpacing: "0.03em",
+                        borderBottom: "1px dotted #D4800A",
+                        paddingBottom: 2,
                       }}
                     >
-                      Estimated Value / అంచనా విలువ
-                      <br />₹{Math.round(totalValue).toLocaleString("en-IN")}
+                      <span
+                        className="font-bold"
+                        style={{
+                          color: "#7A3A00",
+                          fontSize: "clamp(11px,1.3vw,15px)",
+                        }}
+                      >
+                        {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}:
+                      </span>
+                      <span
+                        className="font-bold"
+                        style={{
+                          color: "#1A1A1A",
+                          fontSize: "clamp(11px,1.3vw,15px)",
+                        }}
+                      >
+                        {fmt(fromSqFt(areaSqFt, u))}
+                      </span>
                     </div>
-                  )}
+                  ))}
                 </div>
-              </>
+                {rateVal > 0 && (
+                  <div
+                    className="font-bold mt-2 text-center rounded p-1"
+                    style={{
+                      color: "#fff",
+                      fontSize: "clamp(10px,1.3vw,15px)",
+                      background: "linear-gradient(90deg, #D4800A, #b86a00)",
+                      textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                      letterSpacing: "0.03em",
+                    }}
+                  >
+                    Estimated Value / అంచనా విలువ
+                    <br />₹{Math.round(totalValue).toLocaleString("en-IN")}
+                  </div>
+                )}
+              </div>
             ) : (
               <div
                 className="flex flex-col items-center justify-center h-full"
@@ -817,7 +741,7 @@ export default function App() {
           className="flex flex-col"
           style={{ flex: "1 1 33.33%", overflow: "hidden" }}
         >
-          <div style={sectionHeadStyle}>Registration Fees / నమోదు రుసుము</div>
+          <div style={sectionHeadStyle}>Registration Fees</div>
           <div
             className="flex flex-col overflow-y-auto"
             style={{ flex: 1, padding: "4px 8px 6px", gap: 5 }}
@@ -952,7 +876,7 @@ export default function App() {
               style={{
                 background: "#FBF6EA",
                 borderColor: "#D4800A",
-                fontSize: "clamp(7px,0.85vw,10px)",
+                fontSize: "clamp(13px,1.5vw,17px)",
                 minHeight: 0,
               }}
               data-ocid="regfees.breakdown.panel"
@@ -961,7 +885,7 @@ export default function App() {
                 className="font-bold mb-1 text-center"
                 style={{
                   color: "#D4800A",
-                  fontSize: "clamp(8px,1vw,12px)",
+                  fontSize: "clamp(14px,1.6vw,20px)",
                   textShadow: "0 1px 2px rgba(0,0,0,0.1)",
                 }}
               >
@@ -977,12 +901,18 @@ export default function App() {
                       className="font-bold underline"
                       style={{
                         color: "#1A5FA8",
-                        fontSize: "clamp(8px,0.9vw,11px)",
+                        fontSize: "clamp(13px,1.5vw,17px)",
                       }}
                     >
                       DSD / డీఎస్డీ
                     </a>
-                    <span className="font-bold" style={{ color: "#2E1A0C" }}>
+                    <span
+                      className="font-bold"
+                      style={{
+                        color: "#2E1A0C",
+                        fontSize: "clamp(13px,1.5vw,17px)",
+                      }}
+                    >
                       {dr.dsd !== null
                         ? `₹${Math.round(dsd).toLocaleString("en-IN")}`
                         : "—"}
@@ -996,12 +926,18 @@ export default function App() {
                       className="font-bold underline"
                       style={{
                         color: "#1A5FA8",
-                        fontSize: "clamp(8px,0.9vw,11px)",
+                        fontSize: "clamp(13px,1.5vw,17px)",
                       }}
                     >
                       R.F / నమోదు రుసుము
                     </a>
-                    <span className="font-bold" style={{ color: "#2E1A0C" }}>
+                    <span
+                      className="font-bold"
+                      style={{
+                        color: "#2E1A0C",
+                        fontSize: "clamp(13px,1.5vw,17px)",
+                      }}
+                    >
                       ₹{Math.round(rf).toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -1013,12 +949,18 @@ export default function App() {
                       className="font-bold underline"
                       style={{
                         color: "#1A5FA8",
-                        fontSize: "clamp(7px,0.82vw,9px)",
+                        fontSize: "clamp(12px,1.4vw,16px)",
                       }}
                     >
                       User Charges / వినియోగదారు రుసుము
                     </a>
-                    <span className="font-bold" style={{ color: "#2E1A0C" }}>
+                    <span
+                      className="font-bold"
+                      style={{
+                        color: "#2E1A0C",
+                        fontSize: "clamp(12px,1.4vw,16px)",
+                      }}
+                    >
                       ₹{uc.toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -1027,7 +969,7 @@ export default function App() {
                     style={{
                       color: "#fff",
                       background: "linear-gradient(90deg,#D4800A,#b86a00)",
-                      fontSize: "clamp(9px,1.1vw,13px)",
+                      fontSize: "clamp(14px,1.7vw,21px)",
                       marginTop: 4,
                     }}
                   >
@@ -1052,7 +994,7 @@ export default function App() {
         </section>
       </main>
 
-      {/* ══ FOOTER — compact, highlighted fonts ══ */}
+      {/* ══ FOOTER ══ */}
       <footer
         style={{
           flexShrink: 0,
@@ -1067,7 +1009,6 @@ export default function App() {
           maxHeight: 54,
         }}
       >
-        {/* Left: address info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             className="font-bold"
@@ -1117,8 +1058,6 @@ export default function App() {
             </a>
           </div>
         </div>
-
-        {/* Center: social icons */}
         <div
           style={{
             display: "flex",
@@ -1173,8 +1112,6 @@ export default function App() {
             </a>
           ))}
         </div>
-
-        {/* Right: location button + copyright */}
         <div
           style={{
             display: "flex",
