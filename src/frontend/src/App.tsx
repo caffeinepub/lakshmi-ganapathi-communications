@@ -217,6 +217,34 @@ const PROP_TYPE_LABELS: Record<PropType, string> = {
   room: "Room / గది",
 };
 
+// Directional field definitions with split English and Telugu labels
+const DIR_FIELDS = [
+  {
+    id: "east-input",
+    enLabel: "East",
+    teLabel: "తూర్పు",
+    ocid: "calc.east.input",
+  },
+  {
+    id: "south-input",
+    enLabel: "South",
+    teLabel: "దక్షిణం",
+    ocid: "calc.south.input",
+  },
+  {
+    id: "west-input",
+    enLabel: "West",
+    teLabel: "పడమర",
+    ocid: "calc.west.input",
+  },
+  {
+    id: "north-input",
+    enLabel: "North",
+    teLabel: "ఉత్తరం",
+    ocid: "calc.north.input",
+  },
+] as const;
+
 export default function App() {
   const [unlocked, setUnlocked] = useState(false);
   const [propType, setPropType] = useState<PropType>("land");
@@ -251,6 +279,19 @@ export default function App() {
   const uc = dr.uc;
   const totalFees = dsd + rf + uc;
 
+  const dirValues: Record<string, string> = {
+    "east-input": east,
+    "south-input": south,
+    "west-input": west,
+    "north-input": north,
+  };
+  const dirSetters: Record<string, (v: string) => void> = {
+    "east-input": setEast,
+    "south-input": setSouth,
+    "west-input": setWest,
+    "north-input": setNorth,
+  };
+
   function useCalcTotal() {
     if (totalValue > 0) setPropValue(Math.round(totalValue).toString());
   }
@@ -270,22 +311,44 @@ export default function App() {
     fontFamily: "serif",
   };
 
-  const dirLabelStyle: React.CSSProperties = {
+  // English part of directional labels — attractive bold font
+  const dirEnStyle: React.CSSProperties = {
     fontSize: "clamp(15px,1.9vw,23px)",
-    minWidth: 100,
     color: "#2E1A0C",
     fontWeight: 900,
+    fontFamily: "'Georgia', 'Times New Roman', serif",
+    fontStyle: "italic",
+    letterSpacing: "0.04em",
+    textShadow: "0 1px 2px rgba(212,128,10,0.3)",
+  };
+
+  // Telugu part of directional labels — normal weight
+  const dirTeStyle: React.CSSProperties = {
+    fontSize: "clamp(12px,1.5vw,18px)",
+    color: "#5A3A00",
+    fontWeight: 400,
+    fontFamily: "'Noto Sans Telugu', 'Gautami', sans-serif",
+  };
+
+  const dirLabelWrapStyle: React.CSSProperties = {
+    minWidth: 110,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
     flexShrink: 0,
+    lineHeight: 1.15,
   };
 
   const dirInputStyle: React.CSSProperties = {
     fontSize: "clamp(16px,2vw,26px)",
-    padding: "6px 8px",
+    padding: "4px 8px",
     fontWeight: 900,
-    minHeight: 36,
+    minHeight: 34,
     textAlign: "center",
     flex: 1,
     minWidth: 0,
+    width: "60px",
+    maxWidth: "90px",
   };
 
   // Shared button style matching deed type buttons in Registration Fees box
@@ -473,6 +536,10 @@ export default function App() {
               label: "Prohibited Property",
             },
             { href: "https://meebhoomi.ap.gov.in/", label: "Mee Bhoomi" },
+            {
+              href: "https://cdma.ap.gov.in/services/payments/",
+              label: "Property Tax",
+            },
           ].map(({ href, label }) => (
             <a
               key={label}
@@ -555,51 +622,19 @@ export default function App() {
               </div>
             )}
 
-            {/* Directional inputs — plain number inputs, no +/- buttons */}
+            {/* Directional inputs — split English (bold italic) and Telugu (normal) labels */}
             <div className="flex flex-col gap-1" style={{ flexShrink: 0 }}>
-              {[
-                {
-                  id: "east-input",
-                  label: "East / తూర్పు",
-                  value: east,
-                  onChange: setEast,
-                  ocid: "calc.east.input",
-                },
-                {
-                  id: "south-input",
-                  label: "South / దక్షిణ",
-                  value: south,
-                  onChange: setSouth,
-                  ocid: "calc.south.input",
-                },
-                {
-                  id: "west-input",
-                  label: "West / పడమర",
-                  value: west,
-                  onChange: setWest,
-                  ocid: "calc.west.input",
-                },
-                {
-                  id: "north-input",
-                  label: "North / ఉత్తర",
-                  value: north,
-                  onChange: setNorth,
-                  ocid: "calc.north.input",
-                },
-              ].map(({ id, label, value, onChange, ocid }) => (
-                <div key={id} className="flex items-center gap-1">
-                  <label
-                    htmlFor={id}
-                    className="font-bold"
-                    style={dirLabelStyle}
-                  >
-                    {label}
+              {DIR_FIELDS.map(({ id, enLabel, teLabel, ocid }) => (
+                <div key={id} className="flex items-center gap-2">
+                  <label htmlFor={id} style={dirLabelWrapStyle}>
+                    <span style={dirEnStyle}>{enLabel}</span>
+                    <span style={dirTeStyle}>{teLabel}</span>
                   </label>
                   <input
                     id={id}
                     type="number"
-                    value={value}
-                    onChange={(ev) => onChange(ev.target.value)}
+                    value={dirValues[id]}
+                    onChange={(ev) => dirSetters[id](ev.target.value)}
                     data-ocid={ocid}
                     placeholder="0"
                     className="border border-border rounded text-center"
@@ -610,18 +645,10 @@ export default function App() {
             </div>
 
             {/* Rate input */}
-            <div className="flex items-center gap-1" style={{ flexShrink: 0 }}>
-              <label
-                htmlFor="rate-input"
-                className="font-bold flex-shrink-0"
-                style={{
-                  fontSize: "clamp(15px,1.9vw,23px)",
-                  minWidth: 100,
-                  color: "#2E1A0C",
-                  fontWeight: 900,
-                }}
-              >
-                Rate (₹) / రేటు
+            <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
+              <label htmlFor="rate-input" style={{ ...dirLabelWrapStyle }}>
+                <span style={dirEnStyle}>Rate (₹)</span>
+                <span style={dirTeStyle}>రేటు</span>
               </label>
               <input
                 id="rate-input"
@@ -630,14 +657,43 @@ export default function App() {
                 onChange={(ev) => setRate(ev.target.value)}
                 data-ocid="calc.rate.input"
                 placeholder="per sq ft"
-                className="border border-border rounded flex-1"
+                className="border border-border rounded"
                 style={{
                   fontSize: "clamp(16px,2vw,26px)",
-                  padding: "6px 8px",
+                  padding: "4px 8px",
                   fontWeight: 900,
-                  minHeight: 36,
+                  minHeight: 34,
+                  width: "60px",
+                  maxWidth: "90px",
+                  flex: 1,
+                  minWidth: 0,
+                  textAlign: "center",
                 }}
               />
+            </div>
+
+            {/* Clear button */}
+            <div style={{ flexShrink: 0, textAlign: "center" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setEast("");
+                  setSouth("");
+                  setWest("");
+                  setNorth("");
+                  setRate("");
+                }}
+                data-ocid="calc.clear.button"
+                className="rounded font-bold text-white"
+                style={{
+                  background: "#c0392b",
+                  padding: "3px 18px",
+                  fontSize: "clamp(10px,1.2vw,14px)",
+                  border: "1px solid #922b21",
+                }}
+              >
+                Clear / క్లియర్
+              </button>
             </div>
           </div>
         </section>
@@ -689,16 +745,27 @@ export default function App() {
                           fontSize: "clamp(11px,1.3vw,15px)",
                         }}
                       >
-                        {UNIT_LABELS[u].te}:
+                        {UNIT_LABELS[u].en}
                       </span>
-                      <span
-                        className="font-bold"
-                        style={{
-                          color: "#1A1A1A",
-                          fontSize: "clamp(11px,1.3vw,15px)",
-                        }}
-                      >
-                        {fmt(fromSqFt(areaSqFt, u))}
+                      <span className="flex gap-1 items-center">
+                        <span
+                          className="font-bold"
+                          style={{
+                            color: "#1A1A1A",
+                            fontSize: "clamp(11px,1.3vw,15px)",
+                          }}
+                        >
+                          {fmt(fromSqFt(areaSqFt, u))}
+                        </span>
+                        <span
+                          className="font-bold"
+                          style={{
+                            color: "#7A3A00",
+                            fontSize: "clamp(11px,1.3vw,15px)",
+                          }}
+                        >
+                          {UNIT_LABELS[u].te}
+                        </span>
                       </span>
                     </div>
                   ))}
