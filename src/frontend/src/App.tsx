@@ -2,7 +2,6 @@ import { useState } from "react";
 import { MapModal } from "./components/MapModal";
 import { PasswordGate } from "./components/PasswordGate";
 
-// ─── SVG Social Icons ────────────────────────────────────────────────────────
 function WhatsAppIcon() {
   return (
     <svg
@@ -11,8 +10,8 @@ function WhatsAppIcon() {
       viewBox="0 0 24 24"
       fill="#25D366"
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
     >
       <title>WhatsApp</title>
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
@@ -28,8 +27,8 @@ function TelegramIcon() {
       viewBox="0 0 24 24"
       fill="#0088cc"
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
     >
       <title>Telegram</title>
       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.667l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.892z" />
@@ -44,8 +43,8 @@ function FacebookIcon() {
       viewBox="0 0 24 24"
       fill="#1877F2"
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
     >
       <title>Facebook</title>
       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -59,8 +58,8 @@ function InstagramIcon() {
       aria-label="Instagram"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
     >
       <title>Instagram</title>
       <defs>
@@ -87,8 +86,8 @@ function TwitterXIcon() {
       viewBox="0 0 24 24"
       fill="#000000"
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
     >
       <title>Twitter X</title>
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -96,7 +95,9 @@ function TwitterXIcon() {
   );
 }
 
-// ─── Unit types ──────────────────────────────────────────────────────────────
+const PAYMENT_LINK =
+  "https://prdcfms.apcfss.in:44300/sap/bc/ui5_ui5/sap/zfi_rcp_challan/index.html?sap-client=350#/Detail";
+
 type Unit =
   | "sqft"
   | "sqyd"
@@ -111,7 +112,7 @@ const UNIT_LABELS: Record<Unit, { en: string; te: string }> = {
   sqft: { en: "Sq Ft", te: "చ.అ" },
   sqyd: { en: "Sq Yards", te: "చ.గ" },
   sqm: { en: "Sq Meters", te: "చ.మీ" },
-  gadi: { en: "Gadi", te: "గడి" },
+  gadi: { en: "Gadhulu", te: "గడి" },
   guntha: { en: "Guntha", te: "గుంట" },
   cent: { en: "Cents", te: "సెంట్" },
   bigha: { en: "Bigha", te: "బిఘా" },
@@ -182,7 +183,6 @@ function fmt(n: number): string {
   return n.toFixed(4);
 }
 
-// ─── Step input component ─────────────────────────────────────────────────────
 function StepInput({
   id,
   label,
@@ -208,7 +208,11 @@ function StepInput({
       <label
         htmlFor={id}
         className="font-bold flex-shrink-0"
-        style={{ fontSize: "clamp(8px,0.95vw,11px)", minWidth: 90 }}
+        style={{
+          fontSize: "clamp(11px,1.4vw,16px)",
+          minWidth: 100,
+          color: "#2E1A0C",
+        }}
       >
         {label}
       </label>
@@ -221,10 +225,9 @@ function StepInput({
             background: "#D4800A",
             color: "#fff",
             width: 22,
-            height: 26,
-            fontSize: 15,
+            height: 24,
+            fontSize: 14,
             flexShrink: 0,
-            lineHeight: 1,
           }}
           aria-label={`Decrease ${label}`}
         >
@@ -240,7 +243,7 @@ function StepInput({
           className="border border-border rounded text-center"
           style={{
             fontSize: "clamp(9px,1vw,12px)",
-            padding: "3px 2px",
+            padding: "2px 2px",
             flex: 1,
             minWidth: 0,
           }}
@@ -253,10 +256,9 @@ function StepInput({
             background: "#D4800A",
             color: "#fff",
             width: 22,
-            height: 26,
-            fontSize: 15,
+            height: 24,
+            fontSize: 14,
             flexShrink: 0,
-            lineHeight: 1,
           }}
           aria-label={`Increase ${label}`}
         >
@@ -267,7 +269,6 @@ function StepInput({
   );
 }
 
-// ─── Deed type definitions ────────────────────────────────────────────────────
 type DeedType =
   | "sale"
   | "gift"
@@ -299,8 +300,6 @@ type PropType = "agricultural" | "land" | "room";
 
 export default function App() {
   const [unlocked, setUnlocked] = useState(false);
-
-  // Calculator state
   const [propType, setPropType] = useState<PropType>("land");
   const [rooms, setRooms] = useState("");
   const [east, setEast] = useState("");
@@ -309,15 +308,10 @@ export default function App() {
   const [south, setSouth] = useState("");
   const [unit, setUnit] = useState<Unit>("sqft");
   const [rate, setRate] = useState("");
-
-  // Reg fees state
   const [deedType, setDeedType] = useState<DeedType>("sale");
   const [propValue, setPropValue] = useState("");
-
-  // Map modal
   const [mapOpen, setMapOpen] = useState(false);
 
-  // ─── Area calculation
   const e = Number.parseFloat(east) || 0;
   const w = Number.parseFloat(west) || 0;
   const n = Number.parseFloat(north) || 0;
@@ -330,7 +324,6 @@ export default function App() {
   const rateVal = Number.parseFloat(rate) || 0;
   const totalValue = areaSqFt * rateVal;
 
-  // ─── Registration fee calculation
   const pv = Number.parseFloat(propValue) || 0;
   const dr = DEED_RATES[deedType];
   const dsd = dr.dsd !== null ? pv * dr.dsd : 0;
@@ -342,80 +335,185 @@ export default function App() {
     if (totalValue > 0) setPropValue(Math.round(totalValue).toString());
   }
 
-  if (!unlocked) {
-    return <PasswordGate onSuccess={() => setUnlocked(true)} />;
-  }
+  if (!unlocked) return <PasswordGate onSuccess={() => setUnlocked(true)} />;
+
+  // Shared section header style
+  const sectionHeadStyle: React.CSSProperties = {
+    background: "linear-gradient(90deg, #D4800A 0%, #b86a00 100%)",
+    color: "#FFD700",
+    fontWeight: 900,
+    fontSize: "clamp(10px,1.3vw,15px)",
+    textAlign: "center",
+    padding: "5px 4px",
+    letterSpacing: "0.04em",
+    textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+    flexShrink: 0,
+    fontFamily: "serif",
+  };
 
   return (
     <div
       className="flex flex-col bg-background text-foreground"
       style={{ height: "100vh", overflow: "hidden" }}
     >
-      {/* ══ HEADER ══ */}
-      <header
-        className="flex flex-col border-b border-border"
-        style={{ height: "auto", flexShrink: 0 }}
-      >
-        {/* Branding row */}
+      {/* ══ BANNER ══ */}
+      <div style={{ flexShrink: 0 }}>
         <div
-          className="flex items-center gap-2 px-3 py-2"
-          style={{ flex: "0 0 auto", background: "#1A1A3E" }}
+          style={{ height: "42vh", position: "relative", overflow: "hidden" }}
         >
-          <img
-            src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
-            alt="Lakshmi Ganapathi Communications"
-            className="rounded-full object-cover border-2 flex-shrink-0"
-            style={{ width: 52, height: 52, borderColor: "#D4800A" }}
-          />
-          <div className="flex flex-col min-w-0 flex-1">
-            <h1
-              className="font-serif font-bold leading-tight"
-              style={{
-                color: "#D4800A",
-                fontSize: "clamp(16px,3vw,32px)",
-                lineHeight: 1.2,
-                letterSpacing: "0.02em",
-              }}
-            >
-              Lakshmi Ganapathi Communications
-            </h1>
-            <div
-              className="flex flex-wrap gap-x-3 gap-y-0 items-center"
-              style={{ fontSize: "clamp(9px,1.1vw,12px)" }}
-            >
-              <span
-                className="font-bold font-mono"
-                style={{ color: "#ffffff" }}
-              >
-                Phone: +91 9848872469
-              </span>
-              <a
-                href="mailto:nageswaraprasadtv@gmail.com"
-                className="font-bold"
-                style={{ color: "#D4800A" }}
-              >
-                Email Id: nageswaraprasadtv@gmail.com
-              </a>
-              <span className="font-bold" style={{ color: "#D4800A" }}>
-                Prop: Tiruvaipati Venkata Nageswara Prasad
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Banner image — 25vh */}
-        <div style={{ height: "25vh", flexShrink: 0, overflow: "hidden" }}>
           <img
             src="/assets/12-019d4c94-db38-753e-b747-bc6488393d28.png"
             alt="Banner"
             className="w-full h-full object-cover object-center"
           />
+          {/* Branding overlay */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: "48%",
+              background:
+                "linear-gradient(135deg, rgba(5,5,25,0.92) 0%, rgba(20,10,50,0.85) 100%)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: "10px 14px",
+              gap: 6,
+              borderRight: "3px solid #D4800A",
+              boxShadow: "4px 0 18px rgba(212,128,10,0.35)",
+            }}
+          >
+            {/* Logo + name row */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 2,
+              }}
+            >
+              <img
+                src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
+                alt="Logo"
+                style={{
+                  width: 70,
+                  height: 70,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "3px solid #FFD700",
+                  boxShadow:
+                    "0 0 16px 4px rgba(255,215,0,0.7), 0 0 6px 2px rgba(212,128,10,0.8)",
+                  flexShrink: 0,
+                }}
+              />
+              <h1
+                className="font-serif font-bold"
+                style={{
+                  color: "#FFD700",
+                  fontSize: "clamp(13px,2.2vw,28px)",
+                  lineHeight: 1.15,
+                  margin: 0,
+                  textShadow:
+                    "0 0 12px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.9)",
+                  filter: "drop-shadow(0 0 6px #D4800A)",
+                }}
+              >
+                Lakshmi Ganapathi
+                <br />
+                Communications
+              </h1>
+            </div>
+            {/* Phone */}
+            <div
+              style={{
+                background: "rgba(212,128,10,0.25)",
+                border: "1.5px solid #FFD700",
+                borderRadius: 6,
+                padding: "4px 10px",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span
+                style={{ fontSize: "clamp(11px,1.5vw,18px)", color: "#FFD700" }}
+              >
+                📞
+              </span>
+              <span
+                className="font-bold font-mono"
+                style={{
+                  color: "#FFFFFF",
+                  fontSize: "clamp(11px,1.4vw,17px)",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.9)",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Phone: +91 9848872469
+              </span>
+            </div>
+            {/* Email */}
+            <div
+              style={{
+                background: "rgba(212,128,10,0.18)",
+                border: "1.5px solid #D4800A",
+                borderRadius: 6,
+                padding: "4px 10px",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span
+                style={{ fontSize: "clamp(11px,1.5vw,18px)", color: "#FFD700" }}
+              >
+                ✉
+              </span>
+              <a
+                href="mailto:nageswaraprasadtv@gmail.com"
+                className="font-bold"
+                style={{
+                  color: "#FFD700",
+                  fontSize: "clamp(10px,1.25vw,15px)",
+                  textDecoration: "none",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.9)",
+                  wordBreak: "break-all",
+                }}
+              >
+                Email Id: nageswaraprasadtv@gmail.com
+              </a>
+            </div>
+            {/* Prop name */}
+            <div
+              style={{
+                background: "rgba(255,215,0,0.12)",
+                border: "1.5px solid #FFD700",
+                borderRadius: 6,
+                padding: "4px 10px",
+              }}
+            >
+              <span
+                className="font-bold"
+                style={{
+                  color: "#FFD700",
+                  fontSize: "clamp(10px,1.3vw,16px)",
+                  textShadow:
+                    "0 0 8px rgba(255,215,0,0.6), 0 1px 4px rgba(0,0,0,0.9)",
+                  display: "block",
+                }}
+              >
+                🏢 Prop: Tiruvaipati Venkata Nageswara Prasad
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* 4 external link buttons */}
+        {/* External link buttons */}
         <div
           className="flex gap-2 px-3 py-1 justify-center flex-wrap"
-          style={{ flex: "0 0 auto" }}
+          style={{ flexShrink: 0 }}
         >
           {[
             {
@@ -449,502 +547,661 @@ export default function App() {
             </a>
           ))}
         </div>
-      </header>
+      </div>
 
-      {/* ══ MAIN CONTENT ══ */}
+      {/* ══ MAIN CONTENT — 3 EQUAL COLUMNS ══ */}
       <main
         className="flex flex-row"
-        style={{ flex: "1 1 auto", overflow: "hidden", minHeight: 0 }}
+        style={{ flex: "1 1 0", overflow: "hidden", minHeight: 0 }}
       >
-        {/* LEFT: Calculator — 60% width */}
+        {/* COLUMN 1: Calculator Inputs */}
         <section
           className="flex flex-col border-r border-border"
-          style={{
-            flex: "0 0 60%",
-            width: "60%",
-            overflowY: "auto",
-            padding: "5px 10px",
-          }}
+          style={{ flex: "1 1 33.33%", overflow: "hidden" }}
         >
+          <div style={sectionHeadStyle}>Calculator / లెక్కింపు</div>
           <div
-            className="font-bold text-center font-serif mb-1"
-            style={{ color: "#D4800A", fontSize: "clamp(11px,1.4vw,16px)" }}
+            className="flex flex-col overflow-y-auto"
+            style={{ flex: 1, padding: "4px 8px 6px", gap: 5 }}
           >
-            Calculator / లెక్కింపు
-          </div>
+            {/* Property type */}
+            <div
+              className="flex gap-1 justify-center flex-wrap"
+              style={{ flexShrink: 0 }}
+            >
+              {(["agricultural", "land", "room"] as PropType[]).map((pt) => (
+                <button
+                  key={pt}
+                  type="button"
+                  data-ocid={`calc.${pt}.toggle`}
+                  onClick={() => setPropType(pt)}
+                  className="rounded-full font-bold"
+                  style={{
+                    padding: "2px 9px",
+                    fontSize: "clamp(8px,0.95vw,11px)",
+                    background: propType === pt ? "#D4800A" : "#F6F0E2",
+                    color: propType === pt ? "#fff" : "#2E1A0C",
+                    border: "1px solid #D4800A",
+                  }}
+                >
+                  {pt === "agricultural"
+                    ? "Agricultural / వ్యవసాయ"
+                    : pt === "land"
+                      ? "Land / భూమి"
+                      : "Room / గది"}
+                </button>
+              ))}
+            </div>
 
-          {/* Property type */}
-          <div className="flex gap-1 mb-1 justify-center flex-wrap">
-            {(["agricultural", "land", "room"] as PropType[]).map((pt) => (
-              <button
-                key={pt}
-                type="button"
-                data-ocid={`calc.${pt}.toggle`}
-                onClick={() => setPropType(pt)}
-                className="rounded-full font-bold"
+            {propType === "room" && (
+              <div
+                className="flex items-center gap-1"
+                style={{ flexShrink: 0 }}
+              >
+                <span
+                  className="font-bold"
+                  style={{ fontSize: "clamp(8px,0.9vw,11px)", minWidth: 70 }}
+                >
+                  Rooms / గదులు
+                </span>
+                <input
+                  id="rooms-input"
+                  type="number"
+                  value={rooms}
+                  onChange={(ev) => setRooms(ev.target.value)}
+                  data-ocid="calc.rooms.input"
+                  placeholder="Count"
+                  className="border border-border rounded"
+                  style={{
+                    width: 55,
+                    fontSize: "clamp(9px,1vw,12px)",
+                    padding: "2px 4px",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Unit selector */}
+            <div
+              className="flex flex-wrap gap-1 justify-center"
+              style={{ flexShrink: 0 }}
+            >
+              {UNITS.map((u) => (
+                <button
+                  key={u}
+                  type="button"
+                  data-ocid={`calc.unit.${u}.toggle`}
+                  onClick={() => setUnit(u)}
+                  className="rounded font-bold"
+                  style={{
+                    padding: "1px 6px",
+                    fontSize: "clamp(7px,0.85vw,10px)",
+                    background: unit === u ? "#D4800A" : "#F6F0E2",
+                    color: unit === u ? "#fff" : "#2E1A0C",
+                    border: "1px solid #D4800A",
+                  }}
+                >
+                  {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}
+                </button>
+              ))}
+            </div>
+
+            {/* Directional inputs */}
+            <div className="flex flex-col gap-1" style={{ flexShrink: 0 }}>
+              <StepInput
+                id="east-input"
+                label="East / తూర్పు"
+                value={east}
+                onChange={setEast}
+                ocid="calc.east.input"
+              />
+              <StepInput
+                id="south-input"
+                label="South / దక్షిణ"
+                value={south}
+                onChange={setSouth}
+                ocid="calc.south.input"
+              />
+              <StepInput
+                id="west-input"
+                label="West / పడమర"
+                value={west}
+                onChange={setWest}
+                ocid="calc.west.input"
+              />
+              <StepInput
+                id="north-input"
+                label="North / ఉత్తర"
+                value={north}
+                onChange={setNorth}
+                ocid="calc.north.input"
+              />
+            </div>
+
+            {/* Rate input */}
+            <div className="flex items-center gap-1" style={{ flexShrink: 0 }}>
+              <label
+                htmlFor="rate-input"
+                className="font-bold"
                 style={{
-                  padding: "2px 10px",
-                  fontSize: "clamp(9px,1.05vw,12px)",
-                  background: propType === pt ? "#D4800A" : "#F6F0E2",
-                  color: propType === pt ? "#fff" : "#2E1A0C",
-                  border: "1px solid #D4800A",
+                  fontSize: "clamp(11px,1.4vw,16px)",
+                  minWidth: 100,
+                  color: "#2E1A0C",
                 }}
               >
-                {pt === "agricultural"
-                  ? "Agricultural / వ్యవసాయ"
-                  : pt === "land"
-                    ? "Land / భూమి"
-                    : "Room / గది"}
-              </button>
-            ))}
-          </div>
-
-          {/* Rooms count */}
-          {propType === "room" && (
-            <div className="flex items-center gap-1 mb-1">
-              <span
-                className="font-bold"
-                style={{ fontSize: "clamp(9px,1vw,12px)", minWidth: 75 }}
-              >
-                Rooms / గదులు
-              </span>
+                Rate (₹) / రేటు
+              </label>
               <input
-                id="rooms-input"
+                id="rate-input"
                 type="number"
-                value={rooms}
-                onChange={(ev) => setRooms(ev.target.value)}
-                data-ocid="calc.rooms.input"
-                placeholder="Count"
-                className="border border-border rounded"
+                value={rate}
+                onChange={(ev) => setRate(ev.target.value)}
+                data-ocid="calc.rate.input"
+                placeholder="per sq ft"
+                className="border border-border rounded flex-1"
                 style={{
-                  width: 60,
-                  fontSize: "clamp(9px,1vw,12px)",
-                  padding: "2px 5px",
+                  fontSize: "clamp(8px,0.9vw,11px)",
+                  padding: "2px 4px",
                 }}
               />
             </div>
-          )}
-
-          {/* Unit selector */}
-          <div className="flex flex-wrap gap-1 mb-1 justify-center">
-            {UNITS.map((u) => (
-              <button
-                key={u}
-                type="button"
-                data-ocid={`calc.unit.${u}.toggle`}
-                onClick={() => setUnit(u)}
-                className="rounded font-bold"
-                style={{
-                  padding: "1px 7px",
-                  fontSize: "clamp(8px,0.95vw,11px)",
-                  background: unit === u ? "#D4800A" : "#F6F0E2",
-                  color: unit === u ? "#fff" : "#2E1A0C",
-                  border: "1px solid #D4800A",
-                }}
-              >
-                {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}
-              </button>
-            ))}
           </div>
-
-          {/* Directional inputs — single column: East, South, West, North */}
-          <div className="flex flex-col gap-1 mb-1">
-            <StepInput
-              id="east-input"
-              label="East / తూర్పు"
-              value={east}
-              onChange={setEast}
-              ocid="calc.east.input"
-            />
-            <StepInput
-              id="south-input"
-              label="South / దక్షిణ"
-              value={south}
-              onChange={setSouth}
-              ocid="calc.south.input"
-            />
-            <StepInput
-              id="west-input"
-              label="West / పడమర"
-              value={west}
-              onChange={setWest}
-              ocid="calc.west.input"
-            />
-            <StepInput
-              id="north-input"
-              label="North / ఉత్తర"
-              value={north}
-              onChange={setNorth}
-              ocid="calc.north.input"
-            />
-          </div>
-
-          {/* Rate input */}
-          <div className="flex items-center gap-1 mb-1">
-            <label
-              htmlFor="rate-input"
-              className="font-bold"
-              style={{ fontSize: "clamp(9px,1vw,12px)", minWidth: 80 }}
-            >
-              Rate (₹) / రేటు
-            </label>
-            <input
-              id="rate-input"
-              type="number"
-              value={rate}
-              onChange={(ev) => setRate(ev.target.value)}
-              data-ocid="calc.rate.input"
-              placeholder="per sq ft"
-              className="border border-border rounded flex-1"
-              style={{ fontSize: "clamp(9px,1vw,12px)", padding: "3px 5px" }}
-            />
-          </div>
-
-          {/* Live results */}
-          {areaSqFt > 0 && (
-            <div
-              className="rounded border p-1"
-              style={{
-                background: "#FBF6EA",
-                borderColor: "#D4800A",
-                fontSize: "clamp(8px,0.95vw,11px)",
-              }}
-              data-ocid="calc.results.panel"
-            >
-              <div
-                className="font-bold mb-0.5"
-                style={{ color: "#D4800A", fontSize: "clamp(9px,1vw,12px)" }}
-              >
-                Results / ఫలితాలు
-              </div>
-              <div className="grid grid-cols-2 gap-x-2">
-                {UNITS.map((u) => (
-                  <div key={u} className="flex justify-between gap-1">
-                    <span className="font-bold">
-                      {UNIT_LABELS[u].en}/{UNIT_LABELS[u].te}:
-                    </span>
-                    <span>{fmt(fromSqFt(areaSqFt, u))}</span>
-                  </div>
-                ))}
-              </div>
-              {rateVal > 0 && (
-                <div
-                  className="font-bold mt-0.5"
-                  style={{ color: "#D4800A", fontSize: "clamp(9px,1vw,12px)" }}
-                >
-                  Estimated Value / అంచనా విలువ: ₹
-                  {Math.round(totalValue).toLocaleString("en-IN")}
-                </div>
-              )}
-            </div>
-          )}
         </section>
 
-        {/* RIGHT: Registration Fees — 40% width */}
+        {/* COLUMN 2: Results */}
         <section
-          className="flex flex-col"
-          style={{ flex: "1 1 40%", overflowY: "auto", padding: "5px 8px" }}
+          className="flex flex-col border-r border-border"
+          style={{ flex: "1 1 33.33%", overflow: "hidden" }}
         >
+          <div style={sectionHeadStyle}>Results / ఫలితాలు</div>
           <div
-            className="font-bold text-center font-serif mb-1"
-            style={{ color: "#D4800A", fontSize: "clamp(10px,1.2vw,14px)" }}
+            className="flex flex-col overflow-y-auto"
+            style={{ flex: 1, padding: "6px 8px" }}
           >
-            Registration Fees / నమోదు రుసుము
-          </div>
-
-          {/* Deed type selector */}
-          <div className="flex flex-wrap gap-1 mb-1 justify-center">
-            {(Object.keys(DEED_LABELS) as DeedType[]).map((dt) => (
-              <button
-                key={dt}
-                type="button"
-                data-ocid={`regfees.${dt}.toggle`}
-                onClick={() => setDeedType(dt)}
-                className="rounded font-bold"
+            {areaSqFt > 0 ? (
+              <>
+                <div
+                  className="rounded border p-2 mb-2"
+                  style={{
+                    background: "#FBF6EA",
+                    borderColor: "#D4800A",
+                    fontSize: "clamp(8px,0.95vw,11px)",
+                  }}
+                  data-ocid="calc.results.panel"
+                >
+                  <div
+                    className="font-bold mb-1"
+                    style={{
+                      color: "#D4800A",
+                      fontSize: "clamp(9px,1.1vw,13px)",
+                      textAlign: "center",
+                    }}
+                  >
+                    Area Conversions / విస్తీర్ణం
+                  </div>
+                  <div className="grid grid-cols-1 gap-y-0.5">
+                    {UNITS.map((u) => (
+                      <div
+                        key={u}
+                        className="flex justify-between gap-1"
+                        style={{
+                          borderBottom: "1px dotted #D4800A",
+                          paddingBottom: 2,
+                        }}
+                      >
+                        <span
+                          className="font-bold"
+                          style={{ color: "#7A3A00" }}
+                        >
+                          {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}:
+                        </span>
+                        <span
+                          className="font-bold"
+                          style={{ color: "#1A1A1A" }}
+                        >
+                          {fmt(fromSqFt(areaSqFt, u))}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {rateVal > 0 && (
+                    <div
+                      className="font-bold mt-2 text-center rounded p-1"
+                      style={{
+                        color: "#fff",
+                        fontSize: "clamp(10px,1.3vw,15px)",
+                        background: "linear-gradient(90deg, #D4800A, #b86a00)",
+                        textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                        letterSpacing: "0.03em",
+                      }}
+                    >
+                      Estimated Value / అంచనా విలువ
+                      <br />₹{Math.round(totalValue).toLocaleString("en-IN")}
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div
+                className="flex flex-col items-center justify-center h-full"
                 style={{
-                  padding: "1px 7px",
-                  fontSize: "clamp(7px,0.85vw,10px)",
-                  background: deedType === dt ? "#D4800A" : "#F6F0E2",
-                  color: deedType === dt ? "#fff" : "#2E1A0C",
-                  border: "1px solid #D4800A",
+                  color: "#7A5A2A",
+                  fontSize: "clamp(9px,1vw,12px)",
+                  textAlign: "center",
+                  opacity: 0.7,
                 }}
               >
-                {DEED_LABELS[dt]}
-              </button>
-            ))}
+                <div style={{ fontSize: 32, marginBottom: 6 }}>📐</div>
+                <div className="font-bold">
+                  Enter East, South, West, North
+                  <br />
+                  to see results
+                </div>
+              </div>
+            )}
           </div>
+        </section>
 
-          {/* Property value input */}
-          <div className="flex items-center gap-1 mb-1">
-            <label
-              htmlFor="prop-value-input"
-              className="font-bold"
-              style={{ fontSize: "clamp(7px,0.85vw,10px)", minWidth: 85 }}
+        {/* COLUMN 3: Registration Fees */}
+        <section
+          className="flex flex-col"
+          style={{ flex: "1 1 33.33%", overflow: "hidden" }}
+        >
+          <div style={sectionHeadStyle}>Registration Fees / నమోదు రుసుము</div>
+          <div
+            className="flex flex-col overflow-y-auto"
+            style={{ flex: 1, padding: "4px 8px 6px", gap: 5 }}
+          >
+            {/* Deed type selector */}
+            <div
+              className="flex flex-wrap gap-1 justify-center"
+              style={{ flexShrink: 0 }}
             >
-              Property Value / ఆస్తి విలువ
-            </label>
-            <input
-              id="prop-value-input"
-              type="number"
-              value={propValue}
-              onChange={(ev) => setPropValue(ev.target.value)}
-              data-ocid="regfees.property_value.input"
-              placeholder="₹"
-              className="border border-border rounded flex-1"
-              style={{ fontSize: "clamp(8px,0.9vw,11px)", padding: "2px 4px" }}
-            />
-            <button
-              type="button"
-              onClick={useCalcTotal}
-              data-ocid="regfees.use_calc.button"
-              className="rounded font-bold text-white flex-shrink-0"
+              {(Object.keys(DEED_LABELS) as DeedType[]).map((dt) => (
+                <button
+                  key={dt}
+                  type="button"
+                  data-ocid={`regfees.${dt}.toggle`}
+                  onClick={() => setDeedType(dt)}
+                  className="rounded font-bold"
+                  style={{
+                    padding: "1px 6px",
+                    fontSize: "clamp(7px,0.82vw,9px)",
+                    background: deedType === dt ? "#D4800A" : "#F6F0E2",
+                    color: deedType === dt ? "#fff" : "#2E1A0C",
+                    border: "1px solid #D4800A",
+                  }}
+                >
+                  {DEED_LABELS[dt]}
+                </button>
+              ))}
+            </div>
+
+            {/* Property value input */}
+            <div className="flex items-center gap-1" style={{ flexShrink: 0 }}>
+              <label
+                htmlFor="prop-value-input"
+                className="font-bold"
+                style={{
+                  fontSize: "clamp(11px,1.4vw,16px)",
+                  minWidth: 110,
+                  color: "#2E1A0C",
+                }}
+              >
+                Property Value / ఆస్తి విలువ
+              </label>
+              <input
+                id="prop-value-input"
+                type="number"
+                value={propValue}
+                onChange={(ev) => setPropValue(ev.target.value)}
+                data-ocid="regfees.property_value.input"
+                placeholder="₹"
+                className="border border-border rounded flex-1"
+                style={{
+                  fontSize: "clamp(12px,1.5vw,18px)",
+                  padding: "2px 4px",
+                }}
+              />
+              <button
+                type="button"
+                onClick={useCalcTotal}
+                data-ocid="regfees.use_calc.button"
+                className="rounded font-bold text-white flex-shrink-0"
+                style={{
+                  background: "#D4800A",
+                  padding: "2px 6px",
+                  fontSize: "clamp(7px,0.8vw,9px)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Use Calc
+              </button>
+            </div>
+
+            {/* Rates table */}
+            <div
+              className="rounded border"
               style={{
-                background: "#D4800A",
-                padding: "2px 7px",
-                fontSize: "clamp(7px,0.8vw,10px)",
-                whiteSpace: "nowrap",
+                borderColor: "#D4800A",
+                overflow: "hidden",
+                fontSize: "clamp(6px,0.75vw,8px)",
+                flexShrink: 0,
               }}
             >
-              Use Calc
-            </button>
-          </div>
-
-          {/* Rates reference table */}
-          <div
-            className="rounded border mb-1"
-            style={{
-              borderColor: "#D4800A",
-              overflow: "hidden",
-              fontSize: "clamp(6px,0.78vw,9px)",
-            }}
-          >
-            <table className="w-full">
-              <thead>
-                <tr style={{ background: "#D4800A", color: "#fff" }}>
-                  <th className="font-bold px-1 py-0.5 text-left">Deed Type</th>
-                  <th className="font-bold px-1 py-0.5 text-right">DSD</th>
-                  <th className="font-bold px-1 py-0.5 text-right">R.F</th>
-                  <th className="font-bold px-1 py-0.5 text-right">U.C</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(Object.keys(DEED_LABELS) as DeedType[]).map((dt, i) => {
-                  const dr2 = DEED_RATES[dt];
-                  return (
-                    <tr
-                      key={dt}
-                      style={{
-                        background: i % 2 === 0 ? "#FBF6EA" : "#F6F0E2",
-                      }}
-                      data-ocid={`regfees.rate_table.item.${i + 1}`}
-                    >
-                      <td className="px-1 py-0.5">{DEED_LABELS[dt]}</td>
-                      <td className="px-1 py-0.5 text-right">
-                        {dr2.dsd !== null
-                          ? `${(dr2.dsd * 100).toFixed(1)}%`
-                          : "—"}
-                      </td>
-                      <td className="px-1 py-0.5 text-right">
-                        {dr2.rfFixed !== null
-                          ? `₹${dr2.rfFixed}`
-                          : dr2.rf !== null
-                            ? `${(dr2.rf * 100).toFixed(1)}%`
+              <table className="w-full">
+                <thead>
+                  <tr style={{ background: "#D4800A", color: "#FFD700" }}>
+                    <th className="font-bold px-1 py-0.5 text-left">
+                      Deed Type
+                    </th>
+                    <th className="font-bold px-1 py-0.5 text-right">DSD</th>
+                    <th className="font-bold px-1 py-0.5 text-right">R.F</th>
+                    <th className="font-bold px-1 py-0.5 text-right">U.C</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(Object.keys(DEED_LABELS) as DeedType[]).map((dt, i) => {
+                    const dr2 = DEED_RATES[dt];
+                    return (
+                      <tr
+                        key={dt}
+                        style={{
+                          background: i % 2 === 0 ? "#FBF6EA" : "#F6F0E2",
+                        }}
+                        data-ocid={`regfees.rate_table.item.${i + 1}`}
+                      >
+                        <td className="px-1 py-0.5 font-bold">
+                          {DEED_LABELS[dt]}
+                        </td>
+                        <td className="px-1 py-0.5 text-right">
+                          {dr2.dsd !== null
+                            ? `${(dr2.dsd * 100).toFixed(1)}%`
                             : "—"}
-                      </td>
-                      <td className="px-1 py-0.5 text-right">₹{dr2.uc}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td className="px-1 py-0.5 text-right">
+                          {dr2.rfFixed !== null
+                            ? `₹${dr2.rfFixed}`
+                            : dr2.rf !== null
+                              ? `${(dr2.rf * 100).toFixed(1)}%`
+                              : "—"}
+                        </td>
+                        <td className="px-1 py-0.5 text-right">₹{dr2.uc}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Fee breakdown */}
-          {pv > 0 && (
+            {/* Fee breakdown */}
             <div
-              className="rounded border p-1"
+              className="rounded border p-2 flex-1"
               style={{
                 background: "#FBF6EA",
                 borderColor: "#D4800A",
                 fontSize: "clamp(7px,0.85vw,10px)",
+                minHeight: 0,
               }}
               data-ocid="regfees.breakdown.panel"
             >
               <div
-                className="font-bold mb-0.5"
-                style={{ color: "#D4800A", fontSize: "clamp(8px,0.9vw,11px)" }}
+                className="font-bold mb-1 text-center"
+                style={{
+                  color: "#D4800A",
+                  fontSize: "clamp(8px,1vw,12px)",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                }}
               >
                 Fee Breakdown / రుసుము వివరాలు
               </div>
-              <div className="space-y-0.5">
-                <div className="flex justify-between">
-                  <span className="font-bold">DSD / డీఎస్డీ:</span>
-                  <span>
-                    {dr.dsd !== null
-                      ? `₹${Math.round(dsd).toLocaleString("en-IN")}`
-                      : "—"}
-                  </span>
+              {pv > 0 ? (
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <a
+                      href={PAYMENT_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold underline"
+                      style={{
+                        color: "#1A5FA8",
+                        fontSize: "clamp(8px,0.9vw,11px)",
+                      }}
+                    >
+                      DSD / డీఎస్డీ
+                    </a>
+                    <span className="font-bold" style={{ color: "#2E1A0C" }}>
+                      {dr.dsd !== null
+                        ? `₹${Math.round(dsd).toLocaleString("en-IN")}`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <a
+                      href={PAYMENT_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold underline"
+                      style={{
+                        color: "#1A5FA8",
+                        fontSize: "clamp(8px,0.9vw,11px)",
+                      }}
+                    >
+                      R.F / నమోదు రుసుము
+                    </a>
+                    <span className="font-bold" style={{ color: "#2E1A0C" }}>
+                      ₹{Math.round(rf).toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <a
+                      href={PAYMENT_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold underline"
+                      style={{
+                        color: "#1A5FA8",
+                        fontSize: "clamp(7px,0.82vw,9px)",
+                      }}
+                    >
+                      User Charges / వినియోగదారు రుసుము
+                    </a>
+                    <span className="font-bold" style={{ color: "#2E1A0C" }}>
+                      ₹{uc.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <div
+                    className="flex justify-between font-bold rounded p-1"
+                    style={{
+                      color: "#fff",
+                      background: "linear-gradient(90deg,#D4800A,#b86a00)",
+                      fontSize: "clamp(9px,1.1vw,13px)",
+                      marginTop: 4,
+                    }}
+                  >
+                    <span>Total / మొత్తం:</span>
+                    <span>
+                      ₹{Math.round(totalFees).toLocaleString("en-IN")}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-bold">R.F / నమోదు రుసుము:</span>
-                  <span>₹{Math.round(rf).toLocaleString("en-IN")}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-bold">
-                    User Charges / వినియోగదారు రుసుము:
-                  </span>
-                  <span>₹{uc.toLocaleString("en-IN")}</span>
-                </div>
+              ) : (
                 <div
-                  className="flex justify-between font-bold"
                   style={{
-                    color: "#D4800A",
-                    borderTop: "1px solid #D4800A",
-                    paddingTop: 2,
+                    color: "#7A5A2A",
+                    fontSize: "clamp(7px,0.82vw,10px)",
                   }}
                 >
-                  <span>Total / మొత్తం:</span>
-                  <span>₹{Math.round(totalFees).toLocaleString("en-IN")}</span>
+                  Enter property value above to see fee breakdown.
                 </div>
-              </div>
+              )}
             </div>
-          )}
+          </div>
         </section>
       </main>
 
-      {/* ══ FOOTER ══ */}
+      {/* ══ FOOTER — compact, highlighted fonts ══ */}
       <footer
-        className="border-t border-border flex flex-col justify-between"
         style={{
-          height: "12vh",
-          minHeight: 60,
           flexShrink: 0,
-          padding: "4px 8px 2px",
+          background:
+            "linear-gradient(90deg, #1a0a00 0%, #2E1A0C 60%, #1a0a00 100%)",
+          borderTop: "2px solid #D4800A",
+          padding: "3px 10px 2px",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          minHeight: 44,
+          maxHeight: 54,
         }}
       >
-        <div className="flex flex-col md:flex-row gap-1 flex-1 min-h-0">
-          {/* Contact info */}
+        {/* Left: address info */}
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
-            className="flex flex-col justify-center gap-0"
-            style={{ flex: 1, fontSize: "clamp(7px,0.82vw,10px)" }}
+            className="font-bold"
+            style={{
+              color: "#FFD700",
+              fontSize: "clamp(7px,0.9vw,11px)",
+              lineHeight: 1.3,
+              textShadow: "0 0 6px rgba(255,215,0,0.4)",
+            }}
           >
-            <div
-              className="font-bold"
-              style={{ color: "#D4800A", fontSize: "clamp(7px,0.85vw,10px)" }}
-            >
-              Prop: Tiruvaipati Venkata Nageswara Prasad
-            </div>
-            <div
-              className="font-bold"
-              style={{ color: "#2E1A0C", lineHeight: 1.2 }}
-            >
-              Shop No-22, Pullareddy Complex, Beside Registration Office, Near
-              Ravi Priya Mall, Ongole, Prakasam Dist, Andhra Pradesh, Pin -
-              523002
-            </div>
-            <div className="flex flex-wrap gap-x-2 gap-y-0">
-              <a
-                href="tel:+919848872469"
-                className="font-bold"
-                style={{ color: "#2E1A0C" }}
-              >
-                📞 Phone: +91 9848872469
-              </a>
-              <a
-                href="mailto:nageswaraprasadtv@gmail.com"
-                className="font-bold"
-                style={{ color: "#D4800A" }}
-              >
-                ✉ Email Id: nageswaraprasadtv@gmail.com
-              </a>
-            </div>
+            Prop: Tiruvaipati Venkata Nageswara Prasad
           </div>
-
-          {/* Social + location */}
           <div
-            className="flex flex-col justify-center items-center gap-1"
-            style={{ flexShrink: 0 }}
+            className="font-bold"
+            style={{
+              color: "#FFA040",
+              fontSize: "clamp(6px,0.75vw,9px)",
+              lineHeight: 1.2,
+            }}
           >
-            <div className="flex gap-1.5 items-center">
-              {[
-                {
-                  href: "https://wa.me/919848872469",
-                  icon: <WhatsAppIcon />,
-                  ocid: "footer.whatsapp.button",
-                },
-                {
-                  href: "https://t.me/",
-                  icon: <TelegramIcon />,
-                  ocid: "footer.telegram.button",
-                },
-                {
-                  href: "https://facebook.com/",
-                  icon: <FacebookIcon />,
-                  ocid: "footer.facebook.button",
-                },
-                {
-                  href: "https://instagram.com/",
-                  icon: <InstagramIcon />,
-                  ocid: "footer.instagram.button",
-                },
-                {
-                  href: "https://twitter.com/",
-                  icon: <TwitterXIcon />,
-                  ocid: "footer.twitter.button",
-                },
-              ].map(({ href, icon, ocid }) => (
-                <a
-                  key={ocid}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-ocid={ocid}
-                  className="rounded-full bg-white border border-border flex items-center justify-center"
-                  style={{ width: 26, height: 26, padding: 2 }}
-                >
-                  {icon}
-                </a>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => setMapOpen(true)}
-              data-ocid="footer.view_location.button"
-              className="font-bold rounded text-white"
+            Shop No-22, Pullareddy Complex, Beside Registration Office, Near
+            Ravi Priya Mall, Ongole, AP - 523002
+          </div>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <a
+              href="tel:+919848872469"
+              className="font-bold"
               style={{
-                background: "#D4800A",
-                padding: "2px 10px",
-                fontSize: "clamp(7px,0.82vw,10px)",
+                color: "#FFD700",
+                fontSize: "clamp(7px,0.85vw,10px)",
+                textDecoration: "none",
+                textShadow: "0 0 4px rgba(255,215,0,0.4)",
               }}
             >
-              📍 View Location / స్థానం చూడండి
-            </button>
+              📞 +91 9848872469
+            </a>
+            <a
+              href="mailto:nageswaraprasadtv@gmail.com"
+              className="font-bold"
+              style={{
+                color: "#FFA040",
+                fontSize: "clamp(6px,0.75vw,9px)",
+                textDecoration: "none",
+              }}
+            >
+              ✉ nageswaraprasadtv@gmail.com
+            </a>
           </div>
         </div>
 
-        {/* Attribution */}
+        {/* Center: social icons */}
         <div
-          className="text-center"
           style={{
-            fontSize: "clamp(6px,0.65vw,8px)",
-            color: "#7A5A2A",
-            marginTop: 1,
+            display: "flex",
+            gap: 5,
+            alignItems: "center",
+            flexShrink: 0,
           }}
         >
-          © {new Date().getFullYear()} Lakshmi Ganapathi Communications · Built
-          with{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#D4800A" }}
+          {[
+            {
+              href: "https://wa.me/919848872469",
+              icon: <WhatsAppIcon />,
+              ocid: "footer.whatsapp.button",
+            },
+            {
+              href: "https://t.me/",
+              icon: <TelegramIcon />,
+              ocid: "footer.telegram.button",
+            },
+            {
+              href: "https://facebook.com/",
+              icon: <FacebookIcon />,
+              ocid: "footer.facebook.button",
+            },
+            {
+              href: "https://instagram.com/",
+              icon: <InstagramIcon />,
+              ocid: "footer.instagram.button",
+            },
+            {
+              href: "https://twitter.com/",
+              icon: <TwitterXIcon />,
+              ocid: "footer.twitter.button",
+            },
+          ].map(({ href, icon, ocid }) => (
+            <a
+              key={ocid}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-ocid={ocid}
+              className="rounded-full flex items-center justify-center"
+              style={{
+                width: 24,
+                height: 24,
+                padding: 2,
+                background: "rgba(255,255,255,0.1)",
+                border: "1px solid #D4800A",
+              }}
+            >
+              {icon}
+            </a>
+          ))}
+        </div>
+
+        {/* Right: location button + copyright */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            flexShrink: 0,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setMapOpen(true)}
+            data-ocid="footer.view_location.button"
+            className="font-bold rounded text-white"
+            style={{
+              background: "linear-gradient(90deg,#D4800A,#b86a00)",
+              padding: "2px 10px",
+              fontSize: "clamp(7px,0.85vw,10px)",
+              border: "1px solid #FFD700",
+              textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+              boxShadow: "0 0 6px rgba(212,128,10,0.4)",
+            }}
           >
-            caffeine.ai
-          </a>
+            📍 View Location / స్థానం చూడండి
+          </button>
+          <div style={{ fontSize: "clamp(5px,0.6vw,7px)", color: "#7A5A2A" }}>
+            © {new Date().getFullYear()} Lakshmi Ganapathi Communications ·{" "}
+            <a
+              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#D4800A" }}
+            >
+              caffeine.ai
+            </a>
+          </div>
         </div>
       </footer>
 
-      {/* ══ MAP MODAL ══ */}
       {mapOpen && <MapModal onClose={() => setMapOpen(false)} />}
     </div>
   );
