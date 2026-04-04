@@ -259,6 +259,8 @@ export default function App() {
   const [deedType, setDeedType] = useState<DeedType>("sale");
   const [propValue, setPropValue] = useState("");
   const [mapOpen, setMapOpen] = useState(false);
+  // submitted state: when true, results panel is shown (also updates live)
+  const [submitted, setSubmitted] = useState(false);
 
   const e = Number.parseFloat(east) || 0;
   const w = Number.parseFloat(west) || 0;
@@ -271,6 +273,9 @@ export default function App() {
     avgEW > 0 && avgNS > 0 ? toSqFt(avgEW * avgNS * roomMult, unit) : 0;
   const rateVal = Number.parseFloat(rate) || 0;
   const totalValue = areaSqFt * rateVal;
+
+  // Show results panel when there is area (live) OR when submitted
+  const showResults = areaSqFt > 0 || submitted;
 
   const pv = Number.parseFloat(propValue) || 0;
   const dr = DEED_RATES[deedType];
@@ -294,6 +299,23 @@ export default function App() {
 
   function useCalcTotal() {
     if (totalValue > 0) setPropValue(Math.round(totalValue).toString());
+  }
+
+  function handleSubmit() {
+    setSubmitted(true);
+    // Also sync calculator total to registration fees property value if rate is set
+    if (totalValue > 0) {
+      setPropValue(Math.round(totalValue).toString());
+    }
+  }
+
+  function handleClear() {
+    setEast("");
+    setSouth("");
+    setWest("");
+    setNorth("");
+    setRate("");
+    setSubmitted(false);
   }
 
   if (!unlocked) return <PasswordGate onSuccess={() => setUnlocked(true)} />;
@@ -339,16 +361,17 @@ export default function App() {
     lineHeight: 1.15,
   };
 
+  // ~2 inches wide at 96dpi = 192px; use a fixed width with responsive clamp
   const dirInputStyle: React.CSSProperties = {
     fontSize: "clamp(16px,2vw,26px)",
     padding: "4px 8px",
     fontWeight: 900,
     minHeight: 34,
     textAlign: "center",
-    flex: 1,
-    minWidth: 0,
-    width: "60px",
-    maxWidth: "90px",
+    width: "192px",
+    maxWidth: "192px",
+    minWidth: "120px",
+    flexShrink: 0,
   };
 
   // Shared button style matching deed type buttons in Registration Fees box
@@ -663,31 +686,49 @@ export default function App() {
                   padding: "4px 8px",
                   fontWeight: 900,
                   minHeight: 34,
-                  width: "60px",
-                  maxWidth: "90px",
-                  flex: 1,
-                  minWidth: 0,
                   textAlign: "center",
+                  width: "192px",
+                  maxWidth: "192px",
+                  minWidth: "120px",
+                  flexShrink: 0,
                 }}
               />
             </div>
 
-            {/* Clear button */}
-            <div style={{ flexShrink: 0, textAlign: "center" }}>
+            {/* Submit and Clear buttons */}
+            <div
+              style={{
+                flexShrink: 0,
+                display: "flex",
+                gap: 8,
+                justifyContent: "center",
+              }}
+            >
               <button
                 type="button"
-                onClick={() => {
-                  setEast("");
-                  setSouth("");
-                  setWest("");
-                  setNorth("");
-                  setRate("");
+                onClick={handleSubmit}
+                data-ocid="calc.submit.button"
+                className="rounded font-bold text-white"
+                style={{
+                  background: "linear-gradient(90deg, #D4800A, #b86a00)",
+                  padding: "5px 22px",
+                  fontSize: "clamp(11px,1.4vw,16px)",
+                  border: "2px solid #FFD700",
+                  boxShadow: "0 2px 8px rgba(212,128,10,0.5)",
+                  letterSpacing: "0.05em",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.4)",
                 }}
+              >
+                ✅ Submit / సమర్పించు
+              </button>
+              <button
+                type="button"
+                onClick={handleClear}
                 data-ocid="calc.clear.button"
                 className="rounded font-bold text-white"
                 style={{
                   background: "#c0392b",
-                  padding: "3px 18px",
+                  padding: "5px 18px",
                   fontSize: "clamp(10px,1.2vw,14px)",
                   border: "1px solid #922b21",
                 }}
@@ -708,7 +749,7 @@ export default function App() {
             className="flex flex-col overflow-y-auto"
             style={{ flex: 1, padding: "6px 8px" }}
           >
-            {areaSqFt > 0 ? (
+            {showResults && areaSqFt > 0 ? (
               <div
                 className="rounded border p-2 mb-2"
                 style={{
@@ -800,7 +841,7 @@ export default function App() {
                 <div className="font-bold">
                   Enter East, South, West, North
                   <br />
-                  to see results
+                  and press Submit to see results
                 </div>
               </div>
             )}
