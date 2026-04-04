@@ -96,7 +96,7 @@ function TwitterXIcon() {
 }
 
 const PAYMENT_LINK =
-  "https://prdcfms.apcfss.in:44300/sap/bc/ui5_ui5/sap/zfi_rcp_challan/index.html?sap-client=350#/Detail";
+  "https://prdcfms.apcfss.in:44300/sap/bc/ui5_ui5/sap/zfi_rcp_challan/index.html?sap-client=350";
 
 type Unit =
   | "sqft"
@@ -211,6 +211,11 @@ const DEED_RATES: Record<
 };
 
 type PropType = "agricultural" | "land" | "room";
+const PROP_TYPE_LABELS: Record<PropType, string> = {
+  agricultural: "Agricultural / వ్యవసాయ",
+  land: "Land / భూమి",
+  room: "Room / గది",
+};
 
 export default function App() {
   const [unlocked, setUnlocked] = useState(false);
@@ -282,6 +287,18 @@ export default function App() {
     flex: 1,
     minWidth: 0,
   };
+
+  // Shared button style matching deed type buttons in Registration Fees box
+  const propTypeBtnStyle = (active: boolean): React.CSSProperties => ({
+    padding: "4px 10px",
+    fontSize: "clamp(10px,1.2vw,14px)",
+    fontWeight: 900,
+    letterSpacing: "0.03em",
+    background: active ? "#D4800A" : "#F6F0E2",
+    color: active ? "#fff" : "#2E1A0C",
+    border: "1px solid #D4800A",
+    borderRadius: 4,
+  });
 
   return (
     <div
@@ -491,7 +508,7 @@ export default function App() {
             className="flex flex-col overflow-y-auto"
             style={{ flex: 1, padding: "4px 8px 6px", gap: 5 }}
           >
-            {/* Property type */}
+            {/* Property type — styled to match deed type buttons */}
             <div
               className="flex gap-1 justify-center flex-wrap"
               style={{ flexShrink: 0 }}
@@ -502,23 +519,10 @@ export default function App() {
                   type="button"
                   data-ocid={`calc.${pt}.toggle`}
                   onClick={() => setPropType(pt)}
-                  className="rounded-full font-bold"
-                  style={{
-                    padding: "6px 16px",
-                    fontSize: "clamp(13px,1.7vw,20px)",
-                    fontWeight: 900,
-                    letterSpacing: "0.04em",
-                    textTransform: propType === pt ? "uppercase" : "none",
-                    background: propType === pt ? "#D4800A" : "#F6F0E2",
-                    color: propType === pt ? "#fff" : "#2E1A0C",
-                    border: "1px solid #D4800A",
-                  }}
+                  className="font-bold"
+                  style={propTypeBtnStyle(propType === pt)}
                 >
-                  {pt === "agricultural"
-                    ? "Agricultural / వ్యవసాయ"
-                    : pt === "land"
-                      ? "Land / భూమి"
-                      : "Room / గది"}
+                  {PROP_TYPE_LABELS[pt]}
                 </button>
               ))}
             </div>
