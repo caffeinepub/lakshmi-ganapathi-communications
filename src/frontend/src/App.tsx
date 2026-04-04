@@ -412,7 +412,7 @@ export default function App() {
                 className="font-serif font-bold"
                 style={{
                   color: "#FFD700",
-                  fontSize: "clamp(13px,2.2vw,28px)",
+                  fontSize: "clamp(18px,3vw,38px)",
                   lineHeight: 1.15,
                   margin: 0,
                   textShadow:
@@ -577,8 +577,10 @@ export default function App() {
                   onClick={() => setPropType(pt)}
                   className="rounded-full font-bold"
                   style={{
-                    padding: "2px 9px",
-                    fontSize: "clamp(8px,0.95vw,11px)",
+                    padding: "4px 14px",
+                    fontSize: "clamp(11px,1.4vw,16px)",
+                    letterSpacing: "0.04em",
+                    textTransform: propType === pt ? "uppercase" : "none",
                     background: propType === pt ? "#D4800A" : "#F6F0E2",
                     color: propType === pt ? "#fff" : "#2E1A0C",
                     border: "1px solid #D4800A",
@@ -634,8 +636,10 @@ export default function App() {
                   onClick={() => setUnit(u)}
                   className="rounded font-bold"
                   style={{
-                    padding: "1px 6px",
-                    fontSize: "clamp(7px,0.85vw,10px)",
+                    padding: "3px 8px",
+                    fontSize: "clamp(10px,1.2vw,14px)",
+                    fontWeight: 900,
+                    letterSpacing: "0.03em",
                     background: unit === u ? "#D4800A" : "#F6F0E2",
                     color: unit === u ? "#fff" : "#2E1A0C",
                     border: "1px solid #D4800A",
@@ -725,7 +729,7 @@ export default function App() {
                   style={{
                     background: "#FBF6EA",
                     borderColor: "#D4800A",
-                    fontSize: "clamp(8px,0.95vw,11px)",
+                    fontSize: "clamp(11px,1.3vw,15px)",
                   }}
                   data-ocid="calc.results.panel"
                 >
@@ -733,7 +737,7 @@ export default function App() {
                     className="font-bold mb-1"
                     style={{
                       color: "#D4800A",
-                      fontSize: "clamp(9px,1.1vw,13px)",
+                      fontSize: "clamp(13px,1.5vw,17px)",
                       textAlign: "center",
                     }}
                   >
@@ -751,13 +755,19 @@ export default function App() {
                       >
                         <span
                           className="font-bold"
-                          style={{ color: "#7A3A00" }}
+                          style={{
+                            color: "#7A3A00",
+                            fontSize: "clamp(11px,1.3vw,15px)",
+                          }}
                         >
                           {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}:
                         </span>
                         <span
                           className="font-bold"
-                          style={{ color: "#1A1A1A" }}
+                          style={{
+                            color: "#1A1A1A",
+                            fontSize: "clamp(11px,1.3vw,15px)",
+                          }}
                         >
                           {fmt(fromSqFt(areaSqFt, u))}
                         </span>
@@ -825,8 +835,10 @@ export default function App() {
                   onClick={() => setDeedType(dt)}
                   className="rounded font-bold"
                   style={{
-                    padding: "1px 6px",
-                    fontSize: "clamp(7px,0.82vw,9px)",
+                    padding: "4px 10px",
+                    fontSize: "clamp(10px,1.2vw,14px)",
+                    fontWeight: 900,
+                    letterSpacing: "0.03em",
                     background: deedType === dt ? "#D4800A" : "#F6F0E2",
                     color: deedType === dt ? "#fff" : "#2E1A0C",
                     border: "1px solid #D4800A",
