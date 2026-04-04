@@ -689,7 +689,7 @@ export default function App() {
                           fontSize: "clamp(11px,1.3vw,15px)",
                         }}
                       >
-                        {UNIT_LABELS[u].en} / {UNIT_LABELS[u].te}:
+                        {UNIT_LABELS[u].te}:
                       </span>
                       <span
                         className="font-bold"
@@ -893,7 +893,7 @@ export default function App() {
                   textShadow: "0 1px 2px rgba(0,0,0,0.1)",
                 }}
               >
-                Fee Breakdown / రుసుము వివరాలు
+                Fee Breakdown
               </div>
               {pv > 0 ? (
                 <div className="space-y-1">
@@ -908,7 +908,7 @@ export default function App() {
                         fontSize: "clamp(13px,1.5vw,17px)",
                       }}
                     >
-                      DSD / డీఎస్డీ
+                      DSD
                     </a>
                     <span
                       className="font-bold"
@@ -933,7 +933,7 @@ export default function App() {
                         fontSize: "clamp(13px,1.5vw,17px)",
                       }}
                     >
-                      R.F / నమోదు రుసుము
+                      R.F
                     </a>
                     <span
                       className="font-bold"
@@ -956,7 +956,7 @@ export default function App() {
                         fontSize: "clamp(12px,1.4vw,16px)",
                       }}
                     >
-                      User Charges / వినియోగదారు రుసుము
+                      User Charges
                     </a>
                     <span
                       className="font-bold"
@@ -977,7 +977,7 @@ export default function App() {
                       marginTop: 4,
                     }}
                   >
-                    <span>Total / మొత్తం:</span>
+                    <span>Total:</span>
                     <span>
                       ₹{Math.round(totalFees).toLocaleString("en-IN")}
                     </span>
