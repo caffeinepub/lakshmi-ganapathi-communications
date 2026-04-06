@@ -401,7 +401,7 @@ export default function App() {
             alt="Banner"
             className="w-full h-full object-cover object-center"
           />
-          {/* Branding overlay — very transparent so Sai Baba photo shows through clearly */}
+          {/* Branding overlay — no color tint, branding text directly over the banner image */}
           <div
             style={{
               position: "absolute",
@@ -409,8 +409,7 @@ export default function App() {
               left: 0,
               bottom: 0,
               width: "52%",
-              background:
-                "linear-gradient(135deg, rgba(5,5,25,0.30) 0%, rgba(20,10,50,0.25) 100%)",
+              background: "transparent",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
