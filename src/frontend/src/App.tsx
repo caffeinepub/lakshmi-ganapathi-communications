@@ -428,7 +428,6 @@ export default function App() {
                 marginBottom: 2,
               }}
             >
-              {/* CHANGE 1: Circular logo increased from 110px to 150px */}
               <img
                 src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
                 alt="Logo"
@@ -443,12 +442,11 @@ export default function App() {
                   flexShrink: 0,
                 }}
               />
-              {/* CHANGE 2: Company name font size increased */}
               <h1
                 className="font-serif font-bold"
                 style={{
                   color: "#FFD700",
-                  fontSize: "clamp(20px,3.2vw,48px)",
+                  fontSize: "clamp(14px,2vw,28px)",
                   lineHeight: 1.1,
                   margin: 0,
                   whiteSpace: "nowrap",
@@ -861,10 +859,10 @@ export default function App() {
                     <div style={{ fontSize: "clamp(11px,1.3vw,15px)" }}>
                       Estimated Value / అంచనా విలువ
                     </div>
-                    {/* CHANGE 3: Value number displayed much larger */}
+                    {/* Value number — smaller size */}
                     <div
                       style={{
-                        fontSize: "clamp(20px,2.8vw,38px)",
+                        fontSize: "clamp(14px,1.8vw,22px)",
                         fontWeight: 900,
                         letterSpacing: "0.02em",
                         marginTop: 2,
