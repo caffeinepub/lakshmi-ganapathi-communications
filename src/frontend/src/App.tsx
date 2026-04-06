@@ -408,7 +408,7 @@ export default function App() {
               top: 0,
               left: 0,
               bottom: 0,
-              width: "48%",
+              width: "52%",
               background:
                 "linear-gradient(135deg, rgba(5,5,25,0.92) 0%, rgba(20,10,50,0.85) 100%)",
               display: "flex",
@@ -424,35 +424,38 @@ export default function App() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                gap: 12,
                 marginBottom: 2,
               }}
             >
+              {/* CHANGE 1: Circular logo increased from 110px to 150px */}
               <img
                 src="/assets/uploads/20220114_213453-019d2931-0747-7085-a4e7-c0c1afaeac91-1.jpg"
                 alt="Logo"
                 style={{
-                  width: 70,
-                  height: 70,
+                  width: 150,
+                  height: 150,
                   borderRadius: "50%",
                   objectFit: "cover",
-                  border: "3px solid #FFD700",
+                  border: "4px solid #FFD700",
                   boxShadow:
-                    "0 0 16px 4px rgba(255,215,0,0.7), 0 0 6px 2px rgba(212,128,10,0.8)",
+                    "0 0 20px 6px rgba(255,215,0,0.75), 0 0 8px 3px rgba(212,128,10,0.9)",
                   flexShrink: 0,
                 }}
               />
+              {/* CHANGE 2: Company name font size increased */}
               <h1
                 className="font-serif font-bold"
                 style={{
                   color: "#FFD700",
-                  fontSize: "clamp(14px,2.2vw,30px)",
-                  lineHeight: 1.15,
+                  fontSize: "clamp(20px,3.2vw,48px)",
+                  lineHeight: 1.1,
                   margin: 0,
                   whiteSpace: "nowrap",
                   textShadow:
-                    "0 0 12px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.9)",
-                  filter: "drop-shadow(0 0 6px #D4800A)",
+                    "0 0 16px rgba(255,215,0,0.9), 0 2px 6px rgba(0,0,0,0.9)",
+                  filter: "drop-shadow(0 0 8px #D4800A)",
+                  letterSpacing: "0.03em",
                 }}
               >
                 Lakshmi Ganapathi Communications
@@ -596,12 +599,12 @@ export default function App() {
           <div style={sectionHeadStyle}>Calculator</div>
           <div
             className="flex flex-col overflow-y-auto"
-            style={{ flex: 1, padding: "4px 8px 6px", gap: 5 }}
+            style={{ flex: 1, padding: "6px 8px 6px", gap: 0 }}
           >
             {/* Property type — styled to match deed type buttons */}
             <div
               className="flex gap-1 justify-center flex-wrap"
-              style={{ flexShrink: 0 }}
+              style={{ flexShrink: 0, marginBottom: 8 }}
             >
               {(["agricultural", "land", "room"] as PropType[]).map((pt) => (
                 <button
@@ -620,7 +623,7 @@ export default function App() {
             {propType === "room" && (
               <div
                 className="flex items-center gap-1"
-                style={{ flexShrink: 0 }}
+                style={{ flexShrink: 0, marginBottom: 8 }}
               >
                 <span
                   className="font-bold"
@@ -646,7 +649,8 @@ export default function App() {
             )}
 
             {/* Directional inputs — split English (bold italic) and Telugu (normal) labels */}
-            <div className="flex flex-col gap-1" style={{ flexShrink: 0 }}>
+            {/* Each field has its own bottom margin for breathing room */}
+            <div className="flex flex-col" style={{ flexShrink: 0, gap: 10 }}>
               {DIR_FIELDS.map(({ id, enLabel, teLabel, ocid }) => (
                 <div key={id} className="flex items-center gap-2">
                   <label htmlFor={id} style={dirLabelWrapStyle}>
@@ -667,10 +671,37 @@ export default function App() {
               ))}
             </div>
 
-            {/* Rate input */}
-            <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
+            {/* Divider between boundaries and Rate */}
+            <div
+              style={{
+                margin: "14px 0 10px",
+                borderTop: "2px dashed #D4800A",
+                opacity: 0.5,
+                flexShrink: 0,
+              }}
+            />
+
+            {/* Rate input — highlighted with gold/saffron theme */}
+            <div
+              className="flex items-center gap-2"
+              style={{
+                flexShrink: 0,
+                background: "rgba(212,128,10,0.08)",
+                borderRadius: 6,
+                padding: "6px 6px",
+                border: "1px solid rgba(212,128,10,0.3)",
+              }}
+            >
               <label htmlFor="rate-input" style={{ ...dirLabelWrapStyle }}>
-                <span style={dirEnStyle}>Rate (₹)</span>
+                <span
+                  style={{
+                    ...dirEnStyle,
+                    color: "#D4800A",
+                    textShadow: "0 0 8px rgba(212,128,10,0.5)",
+                  }}
+                >
+                  Rate (₹)
+                </span>
                 <span style={dirTeStyle}>రేటు</span>
               </label>
               <input
@@ -680,7 +711,7 @@ export default function App() {
                 onChange={(ev) => setRate(ev.target.value)}
                 data-ocid="calc.rate.input"
                 placeholder="per sq ft"
-                className="border border-border rounded"
+                className="rounded"
                 style={{
                   fontSize: "clamp(16px,2vw,26px)",
                   padding: "4px 8px",
@@ -691,6 +722,10 @@ export default function App() {
                   maxWidth: "192px",
                   minWidth: "120px",
                   flexShrink: 0,
+                  border: "2px solid #D4800A",
+                  boxShadow:
+                    "0 0 10px 3px rgba(212,128,10,0.55), inset 0 1px 4px rgba(212,128,10,0.15)",
+                  background: "rgba(255,245,220,0.95)",
                 }}
               />
             </div>
@@ -702,6 +737,7 @@ export default function App() {
                 display: "flex",
                 gap: 8,
                 justifyContent: "center",
+                marginTop: 10,
               }}
             >
               <button
@@ -813,17 +849,30 @@ export default function App() {
                 </div>
                 {rateVal > 0 && (
                   <div
-                    className="font-bold mt-2 text-center rounded p-1"
+                    className="font-bold mt-2 text-center rounded p-2"
                     style={{
                       color: "#fff",
-                      fontSize: "clamp(10px,1.3vw,15px)",
                       background: "linear-gradient(90deg, #D4800A, #b86a00)",
                       textShadow: "0 1px 4px rgba(0,0,0,0.6)",
                       letterSpacing: "0.03em",
                     }}
                   >
-                    Estimated Value / అంచనా విలువ
-                    <br />₹{Math.round(totalValue).toLocaleString("en-IN")}
+                    {/* Label line */}
+                    <div style={{ fontSize: "clamp(11px,1.3vw,15px)" }}>
+                      Estimated Value / అంచనా విలువ
+                    </div>
+                    {/* CHANGE 3: Value number displayed much larger */}
+                    <div
+                      style={{
+                        fontSize: "clamp(20px,2.8vw,38px)",
+                        fontWeight: 900,
+                        letterSpacing: "0.02em",
+                        marginTop: 2,
+                        textShadow: "0 2px 8px rgba(0,0,0,0.7)",
+                      }}
+                    >
+                      ₹{Math.round(totalValue).toLocaleString("en-IN")}
+                    </div>
                   </div>
                 )}
               </div>
