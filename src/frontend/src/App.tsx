@@ -401,7 +401,7 @@ export default function App() {
             alt="Banner"
             className="w-full h-full object-cover object-center"
           />
-          {/* Branding overlay */}
+          {/* Branding overlay — very transparent so Sai Baba photo shows through clearly */}
           <div
             style={{
               position: "absolute",
@@ -410,7 +410,7 @@ export default function App() {
               bottom: 0,
               width: "52%",
               background:
-                "linear-gradient(135deg, rgba(5,5,25,0.92) 0%, rgba(20,10,50,0.85) 100%)",
+                "linear-gradient(135deg, rgba(5,5,25,0.30) 0%, rgba(20,10,50,0.25) 100%)",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
@@ -446,13 +446,13 @@ export default function App() {
                 className="font-serif font-bold"
                 style={{
                   color: "#FFD700",
-                  fontSize: "clamp(14px,2vw,28px)",
+                  fontSize: "clamp(18px,2.8vw,38px)",
                   lineHeight: 1.1,
                   margin: 0,
                   whiteSpace: "nowrap",
                   textShadow:
-                    "0 0 16px rgba(255,215,0,0.9), 0 2px 6px rgba(0,0,0,0.9)",
-                  filter: "drop-shadow(0 0 8px #D4800A)",
+                    "0 0 20px rgba(255,215,0,1), 0 2px 8px rgba(0,0,0,1), 0 0 40px rgba(212,128,10,0.8)",
+                  filter: "drop-shadow(0 0 10px #D4800A)",
                   letterSpacing: "0.03em",
                 }}
               >
