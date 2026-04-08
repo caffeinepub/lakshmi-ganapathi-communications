@@ -204,18 +204,61 @@ const DEED_RATES: Record<
   DeedType,
   {
     dsd: number | null;
+    dsdMax: number | null;
     rf: number | null;
     rfFixed: number | null;
     rfMax: number | null;
     uc: number;
   }
 > = {
-  sale: { dsd: 0.065, rf: 0.01, rfFixed: null, rfMax: null, uc: 600 },
-  gift: { dsd: 0.02, rf: 0.005, rfFixed: null, rfMax: 10000, uc: 600 },
-  partition: { dsd: 0.03, rf: 0.005, rfFixed: null, rfMax: null, uc: 600 },
-  mortgage: { dsd: 0.005, rf: 0.001, rfFixed: null, rfMax: 50000, uc: 600 },
-  cancellation: { dsd: null, rf: null, rfFixed: 1000, rfMax: null, uc: 500 },
-  receipt: { dsd: null, rf: null, rfFixed: 1000, rfMax: null, uc: 500 },
+  sale: {
+    dsd: 0.065,
+    dsdMax: null,
+    rf: 0.01,
+    rfFixed: null,
+    rfMax: null,
+    uc: 600,
+  },
+  gift: {
+    dsd: 0.02,
+    dsdMax: null,
+    rf: 0.005,
+    rfFixed: null,
+    rfMax: 10000,
+    uc: 600,
+  },
+  partition: {
+    dsd: 0.03,
+    dsdMax: null,
+    rf: 0.005,
+    rfFixed: null,
+    rfMax: null,
+    uc: 600,
+  },
+  mortgage: {
+    dsd: 0.005,
+    dsdMax: 50000,
+    rf: 0.001,
+    rfFixed: null,
+    rfMax: 10000,
+    uc: 600,
+  },
+  cancellation: {
+    dsd: null,
+    dsdMax: null,
+    rf: null,
+    rfFixed: 1000,
+    rfMax: null,
+    uc: 500,
+  },
+  receipt: {
+    dsd: null,
+    dsdMax: null,
+    rf: null,
+    rfFixed: 1000,
+    rfMax: null,
+    uc: 500,
+  },
 };
 
 type PropType = "agricultural" | "land" | "room";
@@ -303,7 +346,12 @@ export default function App() {
 
   const pv = Number.parseFloat(propValue) || 0;
   const dr = DEED_RATES[deedType];
-  const dsd = dr.dsd !== null ? pv * dr.dsd : 0;
+  const dsd =
+    dr.dsd !== null
+      ? dr.dsdMax !== null
+        ? Math.min(pv * dr.dsd, dr.dsdMax)
+        : pv * dr.dsd
+      : 0;
   const rfRaw =
     dr.rfFixed !== null ? dr.rfFixed : dr.rf !== null ? pv * dr.rf : 0;
   const rf = dr.rfMax !== null ? Math.min(rfRaw, dr.rfMax) : rfRaw;
