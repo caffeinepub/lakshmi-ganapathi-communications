@@ -1126,19 +1126,49 @@ export default function App() {
               style={{
                 borderColor: "#D4800A",
                 overflow: "hidden",
-                fontSize: "clamp(6px,0.75vw,8px)",
+                fontSize: "clamp(13px,1.6vw,20px)",
                 flexShrink: 0,
               }}
             >
               <table className="w-full">
                 <thead>
                   <tr style={{ background: "#D4800A", color: "#FFD700" }}>
-                    <th className="font-bold px-1 py-0.5 text-left">
+                    <th
+                      className="font-bold px-2 py-1 text-left"
+                      style={{
+                        fontSize: "clamp(13px,1.6vw,20px)",
+                        fontWeight: 900,
+                      }}
+                    >
                       Deed Type
                     </th>
-                    <th className="font-bold px-1 py-0.5 text-right">DSD</th>
-                    <th className="font-bold px-1 py-0.5 text-right">R.F</th>
-                    <th className="font-bold px-1 py-0.5 text-right">U.C</th>
+                    <th
+                      className="font-bold px-2 py-1 text-right"
+                      style={{
+                        fontSize: "clamp(13px,1.6vw,20px)",
+                        fontWeight: 900,
+                      }}
+                    >
+                      DSD
+                    </th>
+                    <th
+                      className="font-bold px-2 py-1 text-right"
+                      style={{
+                        fontSize: "clamp(13px,1.6vw,20px)",
+                        fontWeight: 900,
+                      }}
+                    >
+                      R.F
+                    </th>
+                    <th
+                      className="font-bold px-2 py-1 text-right"
+                      style={{
+                        fontSize: "clamp(13px,1.6vw,20px)",
+                        fontWeight: 900,
+                      }}
+                    >
+                      U.C
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1152,22 +1182,48 @@ export default function App() {
                         }}
                         data-ocid={`regfees.rate_table.item.${i + 1}`}
                       >
-                        <td className="px-1 py-0.5 font-bold">
+                        <td
+                          className="px-2 py-1 font-bold"
+                          style={{
+                            fontSize: "clamp(13px,1.6vw,20px)",
+                            fontWeight: 900,
+                          }}
+                        >
                           {DEED_LABELS[dt]}
                         </td>
-                        <td className="px-1 py-0.5 text-right">
+                        <td
+                          className="px-2 py-1 text-right font-bold"
+                          style={{
+                            fontSize: "clamp(13px,1.6vw,20px)",
+                            fontWeight: 900,
+                          }}
+                        >
                           {dr2.dsd !== null
                             ? `${(dr2.dsd * 100).toFixed(1)}%`
                             : "—"}
                         </td>
-                        <td className="px-1 py-0.5 text-right">
+                        <td
+                          className="px-2 py-1 text-right font-bold"
+                          style={{
+                            fontSize: "clamp(13px,1.6vw,20px)",
+                            fontWeight: 900,
+                          }}
+                        >
                           {dr2.rfFixed !== null
                             ? `₹${dr2.rfFixed}`
                             : dr2.rf !== null
                               ? `${(dr2.rf * 100).toFixed(1)}%`
                               : "—"}
                         </td>
-                        <td className="px-1 py-0.5 text-right">₹{dr2.uc}</td>
+                        <td
+                          className="px-2 py-1 text-right font-bold"
+                          style={{
+                            fontSize: "clamp(13px,1.6vw,20px)",
+                            fontWeight: 900,
+                          }}
+                        >
+                          ₹{dr2.uc}
+                        </td>
                       </tr>
                     );
                   })}
@@ -1181,7 +1237,7 @@ export default function App() {
               style={{
                 background: "#FBF6EA",
                 borderColor: "#D4800A",
-                fontSize: "clamp(13px,1.5vw,17px)",
+                fontSize: "clamp(10px,1.1vw,13px)",
                 minHeight: 0,
               }}
               data-ocid="regfees.breakdown.panel"
@@ -1190,7 +1246,7 @@ export default function App() {
                 className="font-bold mb-1 text-center"
                 style={{
                   color: "#D4800A",
-                  fontSize: "clamp(14px,1.6vw,20px)",
+                  fontSize: "clamp(11px,1.3vw,15px)",
                   textShadow: "0 1px 2px rgba(0,0,0,0.1)",
                 }}
               >
@@ -1206,7 +1262,7 @@ export default function App() {
                       className="font-bold underline"
                       style={{
                         color: "#1A5FA8",
-                        fontSize: "clamp(13px,1.5vw,17px)",
+                        fontSize: "clamp(10px,1.1vw,13px)",
                       }}
                     >
                       DSD 6366
@@ -1215,7 +1271,7 @@ export default function App() {
                       className="font-bold"
                       style={{
                         color: "#2E1A0C",
-                        fontSize: "clamp(13px,1.5vw,17px)",
+                        fontSize: "clamp(10px,1.1vw,13px)",
                       }}
                     >
                       {dr.dsd !== null
@@ -1231,7 +1287,7 @@ export default function App() {
                       className="font-bold underline"
                       style={{
                         color: "#1A5FA8",
-                        fontSize: "clamp(13px,1.5vw,17px)",
+                        fontSize: "clamp(10px,1.1vw,13px)",
                       }}
                     >
                       R.F 6370
@@ -1240,7 +1296,7 @@ export default function App() {
                       className="font-bold"
                       style={{
                         color: "#2E1A0C",
-                        fontSize: "clamp(13px,1.5vw,17px)",
+                        fontSize: "clamp(10px,1.1vw,13px)",
                       }}
                     >
                       ₹{Math.round(rf).toLocaleString("en-IN")}
@@ -1254,7 +1310,7 @@ export default function App() {
                       className="font-bold underline"
                       style={{
                         color: "#1A5FA8",
-                        fontSize: "clamp(12px,1.4vw,16px)",
+                        fontSize: "clamp(10px,1.1vw,13px)",
                       }}
                     >
                       User Charges 6032
@@ -1263,7 +1319,7 @@ export default function App() {
                       className="font-bold"
                       style={{
                         color: "#2E1A0C",
-                        fontSize: "clamp(12px,1.4vw,16px)",
+                        fontSize: "clamp(10px,1.1vw,13px)",
                       }}
                     >
                       ₹{uc.toLocaleString("en-IN")}
@@ -1274,7 +1330,7 @@ export default function App() {
                     style={{
                       color: "#fff",
                       background: "linear-gradient(90deg,#D4800A,#b86a00)",
-                      fontSize: "clamp(14px,1.7vw,21px)",
+                      fontSize: "clamp(11px,1.3vw,15px)",
                       marginTop: 4,
                     }}
                   >
@@ -1288,7 +1344,7 @@ export default function App() {
                 <div
                   style={{
                     color: "#7A5A2A",
-                    fontSize: "clamp(7px,0.82vw,10px)",
+                    fontSize: "clamp(10px,1.1vw,14px)",
                   }}
                 >
                   Enter property value above to see fee breakdown.
