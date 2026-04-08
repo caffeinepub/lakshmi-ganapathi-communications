@@ -1,0 +1,22 @@
+type Time = int;
+type Entry = 
+ record {
+   east: float64;
+   north: float64;
+   propertyType: text;
+   roomsCount: nat;
+   south: float64;
+   timestamp: Time;
+   totalArea: float64;
+   totalValue: float64;
+   unit: text;
+   unitRate: float64;
+   west: float64;
+ };
+service : {
+  addEntry: (propertyType: text, east: float64, west: float64, north:
+   float64, south: float64, unit: text, unitRate: float64, roomsCount: 
+   nat, totalArea: float64, totalValue: float64) -> (nat);
+  clearEntries: () -> ();
+  getAllEntries: () -> (vec Entry) query;
+}

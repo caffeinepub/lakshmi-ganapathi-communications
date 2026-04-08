@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { MapModal } from "./components/MapModal";
+import { useEffect, useRef, useState } from "react";
 import { PasswordGate } from "./components/PasswordGate";
 
 function WhatsAppIcon() {
@@ -97,6 +96,9 @@ function TwitterXIcon() {
 
 const PAYMENT_LINK =
   "https://prdcfms.apcfss.in:44300/sap/bc/ui5_ui5/sap/zfi_rcp_challan/index.html?sap-client=350";
+
+const MAPS_LINK =
+  "https://www.google.com/maps/place/Registration+office+and+stamp+office/@15.5204001,80.0470712,19z/data=!4m17!1m10!4m9!1m4!2m2!1d80.0456704!2d15.5189248!4e1!1m3!2m2!1d80.048262!2d15.5204!3m5!1s0x3a4b01002d4cd0af:0x754bbfd69a29963a!8m2!3d15.5204!4d80.048262!16s%2Fg%2F11vrjj189s?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D";
 
 type Unit =
   | "sqft"
@@ -258,9 +260,25 @@ export default function App() {
   const [rate, setRate] = useState("");
   const [deedType, setDeedType] = useState<DeedType>("sale");
   const [propValue, setPropValue] = useState("");
-  const [mapOpen, setMapOpen] = useState(false);
   // submitted state: when true, results panel is shown (also updates live)
   const [submitted, setSubmitted] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        servicesRef.current &&
+        !servicesRef.current.contains(e.target as Node)
+      ) {
+        setServicesOpen(false);
+      }
+    }
+    if (servicesOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [servicesOpen]);
 
   const e = Number.parseFloat(east) || 0;
   const w = Number.parseFloat(west) || 0;
@@ -444,29 +462,30 @@ export default function App() {
               <h1
                 className="font-serif font-bold"
                 style={{
-                  color: "#FFD700",
+                  color: "#FFE066",
                   fontSize: "clamp(18px,2.8vw,38px)",
                   lineHeight: 1.1,
                   margin: 0,
                   whiteSpace: "nowrap",
                   textShadow:
-                    "0 0 20px rgba(255,215,0,1), 0 2px 8px rgba(0,0,0,1), 0 0 40px rgba(212,128,10,0.8)",
-                  filter: "drop-shadow(0 0 10px #D4800A)",
+                    "0 0 16px rgba(255,224,102,0.9), 0 2px 10px rgba(0,0,0,1), 0 0 32px rgba(212,128,10,0.7), 2px 2px 0 rgba(0,0,0,0.8)",
                   letterSpacing: "0.03em",
                 }}
               >
                 Lakshmi Ganapathi Communications
               </h1>
             </div>
+
+            {/* Phone */}
             <div
               style={{
-                background: "rgba(212,128,10,0.25)",
-                border: "1.5px solid #FFD700",
-                borderRadius: 6,
-                padding: "4px 10px",
                 display: "flex",
                 alignItems: "center",
                 gap: 6,
+                padding: "4px 10px",
+                background: "rgba(0,0,0,0.45)",
+                border: "1.5px solid #FFD700",
+                borderRadius: 6,
               }}
             >
               <span
@@ -477,7 +496,7 @@ export default function App() {
               <span
                 className="font-bold font-mono"
                 style={{
-                  color: "#FFFFFF",
+                  color: "#FFE066",
                   fontSize: "clamp(11px,1.4vw,17px)",
                   textShadow: "0 1px 4px rgba(0,0,0,0.9)",
                   letterSpacing: "0.05em",
@@ -486,19 +505,21 @@ export default function App() {
                 Phone: +91 9848872469
               </span>
             </div>
+
+            {/* Email */}
             <div
               style={{
-                background: "rgba(212,128,10,0.18)",
-                border: "1.5px solid #D4800A",
-                borderRadius: 6,
-                padding: "4px 10px",
                 display: "flex",
                 alignItems: "center",
                 gap: 6,
+                padding: "4px 10px",
+                background: "rgba(0,0,0,0.45)",
+                border: "1.5px solid #FFD700",
+                borderRadius: 6,
               }}
             >
               <span
-                style={{ fontSize: "clamp(11px,1.5vw,18px)", color: "#FFD700" }}
+                style={{ fontSize: "clamp(11px,1.5vw,18px)", color: "#FFE066" }}
               >
                 ✉
               </span>
@@ -506,7 +527,7 @@ export default function App() {
                 href="mailto:nageswaraprasadtv@gmail.com"
                 className="font-bold"
                 style={{
-                  color: "#FFD700",
+                  color: "#FFE066",
                   fontSize: "clamp(10px,1.25vw,15px)",
                   textDecoration: "none",
                   textShadow: "0 1px 4px rgba(0,0,0,0.9)",
@@ -516,21 +537,22 @@ export default function App() {
                 Email Id: nageswaraprasadtv@gmail.com
               </a>
             </div>
+
+            {/* Prop name */}
             <div
               style={{
-                background: "rgba(255,215,0,0.12)",
+                padding: "4px 10px",
+                background: "rgba(0,0,0,0.45)",
                 border: "1.5px solid #FFD700",
                 borderRadius: 6,
-                padding: "4px 10px",
               }}
             >
               <span
                 className="font-bold"
                 style={{
-                  color: "#FFD700",
+                  color: "#FFE066",
                   fontSize: "clamp(10px,1.3vw,16px)",
-                  textShadow:
-                    "0 0 8px rgba(255,215,0,0.6), 0 1px 4px rgba(0,0,0,0.9)",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.9)",
                   display: "block",
                 }}
               >
@@ -580,6 +602,76 @@ export default function App() {
               {label}
             </a>
           ))}
+
+          {/* Services dropdown button */}
+          <div
+            ref={servicesRef}
+            style={{ position: "relative", display: "inline-block" }}
+          >
+            <button
+              type="button"
+              data-ocid="services-dropdown-trigger"
+              onClick={() => setServicesOpen((o) => !o)}
+              className="font-bold rounded text-white"
+              style={{
+                background: "#D4800A",
+                padding: "3px 12px",
+                fontSize: "clamp(9px,1.1vw,13px)",
+                whiteSpace: "nowrap",
+                border: "none",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              Services{" "}
+              <span style={{ fontSize: "0.7em", lineHeight: 1 }}>▼</span>
+            </button>
+            {servicesOpen && (
+              <div
+                data-ocid="services-dropdown-menu"
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 3px)",
+                  left: 0,
+                  background: "#fff",
+                  border: "1.5px solid #D4800A",
+                  borderRadius: "6px",
+                  boxShadow: "0 4px 16px rgba(212,128,10,0.18)",
+                  zIndex: 9999,
+                  minWidth: "160px",
+                  overflow: "hidden",
+                }}
+              >
+                <a
+                  href="https://registration.ap.gov.in/igrs-utility-ms/igrsPublicPaymentPage"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-ocid="services-single-challana"
+                  className="no-underline font-bold"
+                  style={{
+                    display: "block",
+                    padding: "7px 14px",
+                    fontSize: "clamp(9px,1.1vw,13px)",
+                    color: "#7a3e00",
+                    background: "transparent",
+                    whiteSpace: "nowrap",
+                    transition: "background 0.15s",
+                  }}
+                  onMouseEnter={(ev) => {
+                    ev.currentTarget.style.background = "#FFF3E0";
+                  }}
+                  onMouseLeave={(ev) => {
+                    ev.currentTarget.style.background = "transparent";
+                  }}
+                  onClick={() => setServicesOpen(false)}
+                >
+                  Single Challana
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -646,7 +738,6 @@ export default function App() {
             )}
 
             {/* Directional inputs — split English (bold italic) and Telugu (normal) labels */}
-            {/* Each field has its own bottom margin for breathing room */}
             <div className="flex flex-col" style={{ flexShrink: 0, gap: 10 }}>
               {DIR_FIELDS.map(({ id, enLabel, teLabel, ocid }) => (
                 <div key={id} className="flex items-center gap-2">
@@ -1062,7 +1153,7 @@ export default function App() {
                         fontSize: "clamp(13px,1.5vw,17px)",
                       }}
                     >
-                      DSD
+                      DSD 6366
                     </a>
                     <span
                       className="font-bold"
@@ -1087,7 +1178,7 @@ export default function App() {
                         fontSize: "clamp(13px,1.5vw,17px)",
                       }}
                     >
-                      R.F
+                      R.F 6370
                     </a>
                     <span
                       className="font-bold"
@@ -1110,7 +1201,7 @@ export default function App() {
                         fontSize: "clamp(12px,1.4vw,16px)",
                       }}
                     >
-                      User Charges
+                      User Charges 6032
                     </a>
                     <span
                       className="font-bold"
@@ -1279,11 +1370,12 @@ export default function App() {
             flexShrink: 0,
           }}
         >
-          <button
-            type="button"
-            onClick={() => setMapOpen(true)}
+          <a
+            href={MAPS_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
             data-ocid="footer.view_location.button"
-            className="font-bold rounded text-white"
+            className="font-bold rounded text-white no-underline"
             style={{
               background: "linear-gradient(90deg,#D4800A,#b86a00)",
               padding: "2px 10px",
@@ -1291,10 +1383,11 @@ export default function App() {
               border: "1px solid #FFD700",
               textShadow: "0 1px 2px rgba(0,0,0,0.5)",
               boxShadow: "0 0 6px rgba(212,128,10,0.4)",
+              display: "inline-block",
             }}
           >
             📍 View Location / స్థానం చూడండి
-          </button>
+          </a>
           <div style={{ fontSize: "clamp(5px,0.6vw,7px)", color: "#7A5A2A" }}>
             © {new Date().getFullYear()} Lakshmi Ganapathi Communications ·{" "}
             <a
@@ -1308,8 +1401,6 @@ export default function App() {
           </div>
         </div>
       </footer>
-
-      {mapOpen && <MapModal onClose={() => setMapOpen(false)} />}
     </div>
   );
 }
